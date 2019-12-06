@@ -4,7 +4,9 @@
 
 ## Output: 
 
-- Here is one sample of generated output:  
+- Here is one sample of generated output.
+- The full file can be found in the output folder.
+- Notice how accurate the code is in terms of opening and closing of quotes, brackets etc  
 
 ![Alt text](output/screenprint.png?raw=true "Title")
 
@@ -28,3 +30,4 @@
 
 -  scikit-learn github repo.
     - https://github.com/scikit-learn/scikit-learn
+
