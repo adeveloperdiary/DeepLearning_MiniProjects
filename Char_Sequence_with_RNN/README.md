@@ -8,7 +8,12 @@
 - The full file can be found in the output folder.
 - Notice how accurate the code is in terms of opening and closing of quotes, brackets etc  
 
-![Alt text](output/screenprint.png?raw=true "Title")
+![Alt text](output/screenprint.png?raw=true "Output")
+
+## RNN Model Architecture:
+
+![Alt text](img/charRNN_architecture.png?raw=true "Architecture")
+
 
 ## Hyperparameters:
 
