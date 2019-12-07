@@ -14,6 +14,12 @@
 
 ![Alt text](img/charRNN_architecture.png?raw=true "Architecture")
 
+## Output: 
+
+- This is the training vs validation loss.
+- The validation loss has flatten after 30 epochs       
+
+![Alt text](img/loss.png?raw=true "Output") 
 
 ## Hyperparameters:
 

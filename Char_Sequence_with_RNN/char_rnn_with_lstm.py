@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.functional import F
+import matplotlib.pyplot as plt
 
 
 def pre_processing():
@@ -321,6 +322,9 @@ def train(model: CharRNN, input, epochs=10, seq_len=10, batch_len=50, lr=0.001, 
     if torch.cuda.is_available():
         model.cuda()
 
+    training_loss = []
+    validation_loss = []
+
     # Loop through the epochs
     for i in range(epochs):
 
@@ -393,6 +397,39 @@ def train(model: CharRNN, input, epochs=10, seq_len=10, batch_len=50, lr=0.001, 
                       "Loss: {:.4f}...".format(loss.item()),
                       "Val Loss: {:.4f}".format(np.mean(val_losses)))
 
+        validation_loss.append(np.mean(val_losses))
+        training_loss.append(loss.item())
+
+    # print Training/Validation Loss
+    plot_loss(training_loss, validation_loss)
+
+
+def plot_loss(training_loss, validation_loss):
+    """
+    Plots the training vs validation loss
+
+    :arguments:
+    ----------------------------------------
+        model       :  CharRNN class
+        train_loader:  Training batch data loader
+        val_loader  :  Validation batch data loader
+        batch_size  :  Batch Size
+        epochs      :  epochs
+        lr          :  Learning Rate
+        clip        :  Gradient Clipping Value
+        print_every :  Print logs
+    :return:
+    ---------------------------------------
+       None
+
+    """
+    plt.plot(training_loss, 'r--')
+    plt.plot(validation_loss, 'b-')
+    plt.legend(['Training Loss', 'Validation Loss'])
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.show()
+
 
 def sample(model: CharRNN, size, prime='import ', top_k=5):
     """
@@ -433,7 +470,7 @@ def sample(model: CharRNN, size, prime='import ', top_k=5):
 
 if __name__ == '__main__':
 
-    training = False
+    training = True
 
     if training:
 
@@ -448,7 +485,7 @@ if __name__ == '__main__':
         train(model, encoded_text, epochs=50, seq_len=128, batch_len=200, lr=0.001, print_every=100)
 
         # Save the model
-        model_name = 'model/rnn_50_epoch.net'
+        model_name = 'model/rnn_50_epoch_new.net'
 
         checkpoint = {'n_hidden': model.n_hidden,
                       'n_layers': model.n_layers,
