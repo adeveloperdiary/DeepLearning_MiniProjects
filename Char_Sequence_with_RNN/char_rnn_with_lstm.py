@@ -433,9 +433,9 @@ def sample(model: CharRNN, size, prime='import ', top_k=5):
 
 if __name__ == '__main__':
 
-    train = False
+    training = False
 
-    if train == True:
+    if training:
 
         # Perform Pre-processing
         encoded_text, int2char, char2int = pre_processing()
