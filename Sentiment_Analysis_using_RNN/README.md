@@ -38,4 +38,12 @@
 
 -  Extract the reviews.zip in the dataset folder
    
+## Related work:
 
+- Here is another work for Sentiment Analysis using Machine Leaning.
+- Visualization:
+    - https://adeveloperdiary.github.io/PSL_Project4/index.html
+    - Source : https://github.com/adeveloperdiary/PSL_Project4
+- Machine Leaning Model:
+    - TBA (To be added to github)
+        
