@@ -539,6 +539,55 @@ def test(model: SentimentRNN, test_loader, batch_size=50):
     print("Test accuracy: {:.3f}".format(test_acc))
 
 
+def prediction(model: SentimentRNN, input):
+    # Pre-Process the text
+    input = input.lower()
+    input = ''.join([c for c in input if c not in punctuation])
+
+    # Convert to list of words
+    input = input.split()
+
+    # Encode the text
+    input_encoded = [[model.word2int[word] for word in input]]
+
+    # Apply padding
+    features = pad_features(input_encoded, 200)
+
+    # convert to tensor to pass into your model
+    feature_tensor = torch.from_numpy(features)
+
+    if torch.cuda.is_available():
+        model.cuda()
+
+    model.eval()
+
+    batch_size = feature_tensor.size(0)
+
+    # initialize hidden state
+    h = model.init_hidden(batch_size)
+
+    if torch.cuda.is_available():
+        feature_tensor = feature_tensor.cuda()
+
+    # initialize hidden state
+    h = model.init_hidden(batch_size)
+
+    # get the output from the model
+    output, h = model(feature_tensor, h)
+
+    # convert output probabilities to predicted class (0 or 1)
+    pred = torch.round(output.squeeze())
+
+    # printing output value, before rounding
+    print('Prediction value, pre-rounding: {:.6f}'.format(output.item()))
+
+    # print custom response
+    if pred.item() == 1:
+        return "Positive Review"
+    else:
+        return "Negative Review"
+
+
 if __name__ == '__main__':
 
     batch_size = 50
@@ -551,9 +600,9 @@ if __name__ == '__main__':
 
     train_loader, val_loader, test_loader = create_batches(train_x, train_y, val_x, val_y, test_x, test_y, batch_size)
 
-    training = True
+    mode = "PREDICTION"  # TRAIN/TEST/PREDICTION
 
-    if training:
+    if mode == "TRAIN":
         # Instantiate the model w/ hyperparams
         output_size = 1
         embedding_dim = 512
@@ -577,7 +626,23 @@ if __name__ == '__main__':
 
         with open(model_name, 'wb') as f:
             torch.save(checkpoint, f)
-    else:
+    elif mode == "PREDICTION":
+        # Open the model checkpoint
+        with open('model/rnn_sentiment_4_epoch.net', 'rb') as f:
+            checkpoint = torch.load(f)
+        # Initialize the CharRNN class
+        model = SentimentRNN(checkpoint['word2int'], checkpoint['embedding_dim'], n_hidden=checkpoint['n_hidden'], n_layers=checkpoint['n_layers'])
+        # Load the trained weights and biases
+        model.load_state_dict(checkpoint['state_dict'])
+
+        positive = "This movie had the best acting and the dialogue was so good. I loved it."
+        negative = "The worst movie I have seen; acting was terrible and I want my money back. This movie had bad acting and the dialogue was slow."
+
+        inputs = [positive, negative]
+        for input in inputs:
+            print(prediction(model, input))
+
+    elif mode == "TEST":
         # Open the model checkpoint
         with open('model/rnn_sentiment_4_epoch.net', 'rb') as f:
             checkpoint = torch.load(f)
