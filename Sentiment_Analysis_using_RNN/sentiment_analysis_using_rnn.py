@@ -478,7 +478,7 @@ def plot_loss(training_loss, validation_loss):
 
 def test(model: SentimentRNN, test_loader, batch_size=50):
     """
-    Predict using the test dataset
+    Predict using the test preprocessing
 
     :arguments:
     ----------------------------------------

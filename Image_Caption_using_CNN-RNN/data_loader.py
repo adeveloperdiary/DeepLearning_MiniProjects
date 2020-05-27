@@ -2,6 +2,9 @@ import nltk
 import os
 import torch
 import torch.utils.data as data
+import sys
+
+sys.path.append('Image_Caption_using_CNN-RNN')
 from vocabulary import Vocabulary
 from PIL import Image
 from pycocotools.coco import COCO
@@ -54,7 +57,7 @@ def get_loader(transform,
         img_folder = os.path.join(cocoapi_loc, 'cocoapi/images/test2014/')
         annotations_file = os.path.join(cocoapi_loc, 'cocoapi/annotations/image_info_test2014.json')
 
-    # COCO caption dataset.
+    # COCO caption preprocessing.
     dataset = CoCoDataset(transform=transform,
                           mode=mode,
                           batch_size=batch_size,
@@ -72,7 +75,7 @@ def get_loader(transform,
         indices = dataset.get_train_indices()
         # Create and assign a batch sampler to retrieve a batch with the sampled indices.
         initial_sampler = data.sampler.SubsetRandomSampler(indices=indices)
-        # data loader for COCO dataset.
+        # data loader for COCO preprocessing.
         data_loader = data.DataLoader(dataset=dataset,
                                       num_workers=num_workers,
                                       batch_sampler=data.sampler.BatchSampler(sampler=initial_sampler,

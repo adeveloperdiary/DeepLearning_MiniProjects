@@ -13,7 +13,7 @@ class Vocabulary(object):
                  start_word="<start>",
                  end_word="<end>",
                  unk_word="<unk>",
-                 annotations_file='../cocoapi/annotations/captions_train2014.json',
+                 annotations_file='/media/home/e5dfe209-8058-4c41-8b61-ca1eee5aa6c2/datasets/coco_2014/annotations/captions_train2014.json',
                  vocab_from_file=False):
         """Initialize the vocabulary.
         Args:
