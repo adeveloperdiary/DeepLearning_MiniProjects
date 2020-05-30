@@ -7,13 +7,14 @@ import albumentations as A
 
 
 class ClassificationDataset(torch.utils.data.Dataset):
-    def __init__(self, image_dir, data_frame, transform, training=True):
+    def __init__(self, image_dir, data_frame, transform, fields={}, training=True):
         super().__init__()
         self.image_dir = image_dir
         self.data_frame = data_frame
         self.transform = transform
         self.training = training
-        self.image_ids = data_frame['image'].unique()
+        self.fields = fields
+        self.image_ids = data_frame[self.fields['image']].unique()
         self.image_ids = shuffle(self.image_ids)
 
     def __len__(self):
@@ -22,7 +23,7 @@ class ClassificationDataset(torch.utils.data.Dataset):
     def __getitem__(self, index):
         image_id = self.image_ids[index]
 
-        image_class = self.data_frame[self.data_frame['image'] == image_id]['class']
+        image_class = self.data_frame[self.data_frame[self.fields['image']] == image_id][self.fields['label']]
         image_class = image_class.values
 
         image_class = torch.as_tensor(image_class, dtype=torch.int64)
