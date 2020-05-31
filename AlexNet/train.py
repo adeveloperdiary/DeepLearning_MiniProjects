@@ -40,10 +40,13 @@ def getDataLoader(csv_path, images_path, transformation, fields, training=False,
 
 
 fields = {'image': 'image', 'label': 'class'}
-train_data_loader = getDataLoader(csv_path=TRAIN_CSV, images_path=TRAIN_DIR, transformation=train_transformation, fields=fields, training=True,
-                                  batch_size=512, shuffle=True, num_workers=16, pin_memory=True)
-val_data_loader = getDataLoader(csv_path=VALID_CSV, images_path=VALID_DIR, transformation=test_transformation, fields=fields, training=False,
-                                batch_size=16, shuffle=True, num_workers=4, pin_memory=True)
+train_data_loader = getDataLoader(csv_path=config['TRAIN_CSV'], images_path=config['TRAIN_DIR'], transformation=train_transformation,
+                                  fields=fields,
+                                  training=True,
+                                  batch_size=256, shuffle=True, num_workers=16, pin_memory=True)
+val_data_loader = getDataLoader(csv_path=config['VALID_CSV'], images_path=config['VALID_DIR'], transformation=test_transformation, fields=fields,
+                                training=False,
+                                batch_size=16, shuffle=False, num_workers=4, pin_memory=True)
 
 # writer = SummaryWriter('runs/alexnet')
 
@@ -56,7 +59,7 @@ model = AlexNetModel(num_classes=256)
 #    print(f"Let's use {int(torch.cuda.device_count())} GPUs!")
 #    model = torch.nn.DataParallel(model.model)
 
-model.to(DEVICE)
+model.to(config['DEVICE'])
 # opt_level = 'O1'
 # model, optimizer = amp.initialize(model, optimizer, opt_level=opt_level)
 
@@ -68,7 +71,7 @@ scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', fa
 criterion = torch.nn.CrossEntropyLoss()
 model.cuda()
 log_interval = 1
-loss_hist = Averager()
+loss_hist = AverageLoss()
 
 # writer.add_graph(model, images)
 # writer.close()
@@ -77,8 +80,8 @@ for epoch in range(100):
     loss_hist.reset()
     model.train()
     for i, (images, labels, image_id) in enumerate(train_data_loader):
-        images = images.to(DEVICE)
-        labels = labels.to(DEVICE)
+        images = images.to(config['DEVICE'])
+        labels = labels.to(config['DEVICE'])
 
         optimizer.zero_grad()
 
@@ -94,20 +97,20 @@ for epoch in range(100):
         loss.backward()
         optimizer.step()
 
-    if epoch % log_interval == 0:  # print every 2000 mini-batches
-        model.eval()
-        correct = 0
-        total = 0
-        with torch.no_grad():
-            for images, labels, image_id in val_data_loader:
-                images = images.to(DEVICE)
-                labels = labels.to(DEVICE)
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for images, labels, image_id in val_data_loader:
+            images = images.to(config['DEVICE'])
+            labels = labels.to(config['DEVICE'])
 
-                outputs = model(images)
-                _, predicted = torch.max(outputs.data, 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
-        accuracy = (100 * correct / total)
-        print(f"Epoch: #{epoch} Iteration: #{i} Average loss: {loss_hist.value} Validation Accuracy: {accuracy}")
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+        print(correct, total)
+    accuracy = (100 * correct / total)
+    print(f"Epoch: #{epoch} Iteration: #{i} Average loss: {loss_hist.value} Validation Accuracy: {accuracy}")
     scheduler.step(accuracy)
     # scheduler.step(accuracy)
