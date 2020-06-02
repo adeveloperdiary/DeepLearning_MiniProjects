@@ -53,9 +53,9 @@ class AlexNetModel(torch.nn.Module):
             torch.nn.LogSoftmax(dim=1)
         )
 
-        #self.model.apply(model_util.weights_init_xavier_uniform)
+        self.model.apply(model_util.weights_init_xavier_uniform)
 
-    #@torch.cuda.amp.autocast()
+    # @torch.cuda.amp.autocast()
     def forward(self, x):
         x = self.model(x)
         return x
