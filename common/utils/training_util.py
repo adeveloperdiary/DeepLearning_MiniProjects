@@ -22,3 +22,4 @@ class AverageLoss:
     def reset(self):
         self.current_total = 0.0
         self.iterations = 0.0
+
