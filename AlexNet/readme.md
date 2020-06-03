@@ -209,10 +209,8 @@ config["LOGFILE"] = "output.log"
 config["LOGLEVEL"] = "INFO"
 ```
 
+
      
-
-
-        
 ## References
 <a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
 
