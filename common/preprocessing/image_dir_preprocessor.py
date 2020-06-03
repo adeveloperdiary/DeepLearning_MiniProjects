@@ -4,9 +4,7 @@ import cv2
 from tqdm import tqdm
 import tracemalloc
 import matplotlib.pyplot as plt
-# Change the import as needed
-from properties import *
-# from .properties import *
+from common.preprocessing.properties import *
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import uuid

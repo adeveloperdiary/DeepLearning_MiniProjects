@@ -1,110 +1,35 @@
-import numpy as np
-import cv2
-import numpy as np
-import torch
-from torch.utils.data import DataLoader
-import torchvision
-from AlexNet.model import AlexNetModel
 from AlexNet.properties import *
-from common.dataset.dataset import ClassificationDataset
-import pandas as pd
-import matplotlib.pyplot as plt
 from common.utils.training_util import *
-from AlexNet.transformation import *
-import time
 from tqdm import tqdm
-import os
-import logging
-import logging.handlers
-import sys
 from apex import amp
-import apex
-from torch.utils.tensorboard import SummaryWriter
+from common.utils.init_executor import *
+
+"""
+    This class was written to reduce and simply the lines of reusable codes needed for a functioning 
+    CNN.
+    
+    This is the very initial version, hence the BaseExecutor class is expected to evolve with more 
+    complex functionality.
+        
+    There are many aspects which are covered in the Executor and its parent class BaseExecutor, such as:
+        1.  Data Augmentation is outside of this class and can be defined in a 
+            semi declarative way using albumentations library inside the transformation.py class.
+        2.  Automatic Loading and Saving models from and to checkpoint. 
+        3.  Integration with Tensor Board. The Tensor Board data is being written after a checkpoint save.
+            This is to make sure that upon restarting the training, the plots are properly drawn.
+                A.  Both Training Loss and Validation Accuracy is being written. The code will be modified to 
+                    also include Training Accuracy and Validation Loss.
+                B.  The model is also being stored as graph for visualization.
+        4.  Logging has been enabled in both console and external file. The external file name can be configured 
+            using the configuration.
+        5.  Multi-GPU Training has been enabled using torch.nn.DataParallel() functionality. 
+        6.  Mixed Precision has been enabled using Nvidia's apex library as the PyTorch 1.6 is not released yet.
+            None:   At this moment both Multi-GPU and Mixed Precision can not be using together. This will be fixed 
+                    once PyTorch 1.6 has been released.
+"""
 
 
-class BaseLogger:
-    def __init__(self, logger):
-        self.logger = logger
-
-    def info(self, message):
-        self.logger.info(message)
-        print(message)
-
-    def error(self, message):
-        self.logger.error(message)
-        print(message)
-
-    def warning(self, message):
-        self.logger.warning(message)
-        print(message)
-
-
-class InitObject(object):
-    def __init__(self):
-        self.train_data_loader = None
-        self.val_data_loader = None
-        self.test_data_loader = None
-        self.model = None
-        self.optimizer = None
-        self.scheduler = None
-        self.criterion = None
-        self.loss_hist = None
-        self.pbar = None
-        self.last_checkpoint_file = None
-        self.load_from_check_point = None
-        self.logger = None
-
-        self.CHECKPOINT_PATH = None
-        self.CHECKPOINT_INTERVAL = None
-        self.NUM_CLASSES = None
-        self.INPUT_DIR = None
-        self.TRAIN_DIR = None
-        self.VALID_DIR = None
-        self.TRAIN_CSV = None
-        self.VALID_CSV = None
-        self.DEVICE = None
-        self.EPOCHS = None
-        self.PROJECT_NAME = None
-        self.LOGFILE = None
-        self.LOGLEVEL = None
-        self.MULTI_GPU = None
-        self.FP16_MIXED = None
-
-    def init_logging(self):
-        """
-            Initialize the logger so that both console and file logging can be enabled
-        """
-
-        # Initialize logging
-        log = logging.getLogger()
-        log.setLevel(self.LOGLEVEL)
-        formatter = logging.Formatter(logging.BASIC_FORMAT)
-
-        # Create file handler
-        file_handler = logging.handlers.WatchedFileHandler(self.LOGFILE)
-        file_handler.setFormatter(formatter)
-        log.addHandler(file_handler)
-
-        # Initialize the logger instance
-        self.logger = BaseLogger(log)
-
-    def init_checkpoint(self):
-        """
-            The following logic is to automatically determine whether to load from
-            the last checkpoint and determine the last checkpoint file.
-        """
-
-        # If the last.checkpoint file exists in the input dir
-        if os.path.isfile(f'{self.INPUT_DIR}/last.checkpoint'):
-            # Open the file and read the first line
-            with open(f'{self.INPUT_DIR}/last.checkpoint', 'r') as file:
-                self.last_checkpoint_file = file.readlines()[0]
-                # If the file exists then load from last checkpoint
-                if os.path.isfile(self.last_checkpoint_file):
-                    self.load_from_check_point = True
-
-
-class BaseExecutor(InitObject):
+class BaseExecutor(InitExecutor):
 
     def __init__(self, data_loaders, config):
         super().__init__()
@@ -122,10 +47,18 @@ class BaseExecutor(InitObject):
         # Init Checkpoint
         self.init_checkpoint()
 
-        # Initialize the tensor board summary writer
-        self.tb_writer = SummaryWriter()
+        # Initialize the arrays for tensor boards
+        # This is needed as scalar data will be pushed to tensor board
+        # only when the checkpoint is being saved.
+        # So that in the next run the plot will be properly appended.
+        self.init_temp_arrays_for_tensor_board()
 
-    def forward_backward_pass(self, images, labels, epoch):
+    def init_temp_arrays_for_tensor_board(self):
+        # Reset the temp lists
+        self.val_acc = []
+        self.train_loss = []
+
+    def forward_backward_pass(self, images, labels, epoch, i):
         """
             This function is for one time forward and backward pass. The epoch is used only for logging.
 
@@ -167,6 +100,9 @@ class BaseExecutor(InitObject):
         # Update Progress Bar with the running average loss. Later add the validation accuracy
         self.pbar.set_postfix(epoch=f" {epoch}, loss= {round(self.loss_hist.value, 4)}", refresh=True)
         self.pbar.update()
+
+        # add to train loss
+        self.train_loss.append((round(self.loss_hist.value, 4), (epoch - 1) * len(self.train_data_loader) + i))
 
     def calculate_validation_loss_accuracy(self):
         """
@@ -226,8 +162,7 @@ class BaseExecutor(InitObject):
             This function is for creating an empty checkpoint folder. The folder does not get created until
             there is a checkpoint to save.
         """
-        self.CHECKPOINT_PATH = f'{self.INPUT_DIR}/checkpoint/{datetime.datetime.now().strftime("%b-%d-%Y-%H-%M-%S")}'
-        os.makedirs(self.CHECKPOINT_PATH)
+        self.CHECKPOINT_PATH = f'{self.INPUT_DIR}/checkpoint/{datetime.now().strftime("%b-%d-%Y-%H-%M-%S")}'
 
     def init_training_loop(self):
         """
@@ -248,30 +183,42 @@ class BaseExecutor(InitObject):
             This function is for saving model to disk.
         """
 
-        # Create the checkpoint dir
-        self.create_checkpoint_folder()
+        if epoch % self.CHECKPOINT_INTERVAL == 0:
+            # Create the checkpoint dir
+            if not os.path.isdir(self.CHECKPOINT_PATH):
+                os.makedirs(self.CHECKPOINT_PATH)
 
-        file_name = f'{self.CHECKPOINT_PATH}/{self.PROJECT_NAME}_checkpoint_{epoch}.pth'
-        self.logger.info(f"\tSaving checkpoint [{file_name}]...")
+            file_name = f'{self.CHECKPOINT_PATH}/{self.PROJECT_NAME}_checkpoint_{epoch}.pth'
+            self.logger.info(f"\tSaving checkpoint [{file_name}]...")
 
-        # Create the checkpoint file
-        checkpoint = {
-            'epoch': epoch,
-            'model_state_dict': self.model.state_dict(),
-            'optimizer_state_dict': self.optimizer.state_dict(),
-        }
+            # Create the checkpoint file
+            checkpoint = {
+                'epoch': epoch,
+                'model_state_dict': self.model.state_dict(),
+                'optimizer_state_dict': self.optimizer.state_dict()
+            }
 
-        # Add scheduler if available
-        if self.scheduler:
-            checkpoint['scheduler'] = self.scheduler.state_dict()
+            # Add scheduler if available
+            if self.scheduler:
+                checkpoint['scheduler'] = self.scheduler.state_dict()
 
-        # Save the checkpoint file to disk
-        torch.save(checkpoint, file_name)
+            # Save the checkpoint file to disk
+            torch.save(checkpoint, file_name)
 
-        # Indicate the last checkpoint file to last.checkpoint
-        # This will be used for next run to load from checkpoint automatically
-        with open(f'{self.INPUT_DIR}/last.checkpoint', 'w+') as file:
-            file.write(file_name)
+            # Indicate the last checkpoint file to last.checkpoint
+            # This will be used for next run to load from checkpoint automatically
+            with open(f'{self.INPUT_DIR}/last.checkpoint', 'w+') as file:
+                file.writelines('\n'.join([file_name, self.tb_writer.get_logdir()]))
+
+            # Write to tensor board
+            for y, x in self.train_loss:
+                self.tb_writer.add_scalar("Loss/train", y, x)
+
+            for y, x in self.val_acc:
+                self.tb_writer.add_scalar("Accuracy/val", y, x)
+
+            # Reset the arrays
+            self.init_temp_arrays_for_tensor_board()
 
     def load_checkpoint(self):
         """
@@ -291,9 +238,9 @@ class BaseExecutor(InitObject):
 
             start_epoch = checkpoint['epoch'] + 1
 
-            # Push the parameters to the GPU
             self.logger.info(f"\tSuccessfully loaded model from checkpoint {self.last_checkpoint_file} ...")
 
+        # Push the parameters to the GPU
         self.model.cuda()
 
         return start_epoch
@@ -335,3 +282,15 @@ class BaseExecutor(InitObject):
             self.model, self.optimizer = amp.initialize(self.model, self.optimizer, opt_level=opt_level)
 
             self.logger.info(f"\tMixed Precision mode enabled for training ...")
+
+    def save_model_to_tensor_board(self):
+        """
+            This function is for saving the graph to tensor board
+        """
+
+        # load a batch from the validation data loader
+        loader = iter(self.val_data_loader)
+        images, labels, _ = loader.next()
+
+        # save the model graph to tensor board
+        self.tb_writer.add_graph(self.model, images)

@@ -1,27 +1,20 @@
-import numpy as np
-import cv2
-import numpy as np
-import torch
 from torch.utils.data import DataLoader
-import torchvision
 from AlexNet.model import AlexNetModel
-from AlexNet.properties import *
 from common.dataset.dataset import ClassificationDataset
 import pandas as pd
-import matplotlib.pyplot as plt
-from common.utils.training_util import *
 from AlexNet.transformation import *
-import time
-from tqdm import tqdm
-import os
-import logging
-import logging.handlers
-import sys
-from apex import amp
-import apex
-from torch.utils.tensorboard import SummaryWriter
 import timeit
 from common.utils.base_executor import *
+
+"""
+    The Executor class is responsible for the training and testing of the AlexNet paper. It takes the data loaders and
+    configuration (properties.py) as the input. This extends the parents class BaseExecutor, which 
+    contains many boilerplate reusable methods.  
+    
+    This class was written to reduce and simply the lines of reusable codes needed for a functioning 
+    CNN.
+        
+"""
 
 
 class Executor(BaseExecutor):
@@ -36,6 +29,8 @@ class Executor(BaseExecutor):
 
         # initialize the model
         self.model = AlexNetModel(num_classes=self.NUM_CLASSES)
+        # Save model to tensor board
+        self.save_model_to_tensor_board()
 
         self.enable_multi_gpu_training()
 
@@ -73,6 +68,8 @@ class Executor(BaseExecutor):
         self.logger.info("Building model ...")
         self.build_model()
 
+        self.create_checkpoint_folder()
+
         # Load model from checkpoint if needed
         start_epoch = self.load_checkpoint()
 
@@ -86,9 +83,7 @@ class Executor(BaseExecutor):
                 images = images.to(self.DEVICE)
                 labels = labels.to(self.DEVICE)
 
-                self.forward_backward_pass(images, labels, epoch)
-
-                self.tb_writer.add_scalar("Loss/train", round(self.loss_hist.value, 4), (epoch - 1) * len(self.train_data_loader) + i)
+                self.forward_backward_pass(images, labels, epoch, i)
 
             eval_accuracy = self.calculate_validation_loss_accuracy()
 
@@ -101,19 +96,21 @@ class Executor(BaseExecutor):
             # Close the progress bar
             self.pbar.close()
 
+            # Add to validation loss
+            self.val_acc.append((round(eval_accuracy, 3), epoch))
+
             # Save the model ( if needed )
             self.save_checkpoint(epoch)
-
-            self.tb_writer.add_scalar("Accuracy/val", round(eval_accuracy, 3), epoch)
 
         self.tb_writer.close()
 
 
 if __name__ == '__main__':
-    def getDataLoader(csv_path, images_path, transformation, fields, training=False, batch_size=16, shuffle=False, num_workers=4, pin_memory=False,
+    def getDataLoader(csv_path, images_path, transformation, fields, training=False, batch_size=16, shuffle=False, num_workers=4,
+                      pin_memory=False,
                       drop_last=True):
         df = pd.read_csv(csv_path)
-        dataset = ClassificationDataset(images_path, df, transformation, fields, training)
+        dataset = ClassificationDataset(images_path, df, transformation, fields, training, mean_rgb=f"{config['INPUT_DIR']}/rgb_val.json")
         data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=pin_memory, drop_last=drop_last)
         return data_loader
 
@@ -132,4 +129,4 @@ if __name__ == '__main__':
     start = timeit.default_timer()
     e.train()
     stop = timeit.default_timer()
-    print('Time: ', stop - start)
+    print(f'Training Time: {round((stop - start) / 60, 2)} Minutes')
