@@ -154,7 +154,8 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
 | 100                    | 0\.0777           | 46\.5%                  | 99\.4%                | 0\.01             |
 | 200 \( not in chart \) | 0\.0488           | 59\.3%                  | 99\.6%                | 0\.0003125        |
 
-- The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.      
+- The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
+- 200 epochs took 60 minutes to train.     
 
 ## References
 <a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
