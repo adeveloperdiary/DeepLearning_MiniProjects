@@ -12,3 +12,10 @@
 - However for a larger data set RNN can provide a better prediction than typical Machine Learning approach.  
 - Find the details of the project here: 
     - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/Sentiment_Analysis_using_RNN 
+
+## 3. Implementation of AlexNet using PyTorch
+
+- This implementation is an almost exact replica of the AlexNet paper in PyTorch, 
+  however there are many common factors that were taken care such as Mixed Precision, Tensor Board integration etc
+- Find the details of the project here:
+    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet 
