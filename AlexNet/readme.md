@@ -83,7 +83,7 @@ There are few differences in the CNN Model Architecture between this implementat
 2. Use **Max Pooling** instead of Average Pooling.
 3. Use more Dropout layers ( after MaxPool layers ) to reduce over-fitting.
 4. Use **Xavier Normal** initialization instead of initializing just from a normal distribution. 
-   The He paper also refer the AlexNet paper with the following text:
+   The He paper also refers the AlexNet paper with the following text:
    
  > Recent deep CNNs are mostly initialized by random weights drawn from Gaussian distributions
 
@@ -129,20 +129,22 @@ In PyTorch input image of 224 x 224 can be used as PyTorch ignores the fraction.
 ### Architecture Diagram
 Here is the original architecture diagram from the paper.
 
-![Image of Yaktocat](img/alexnet.jpeg)
+![Image of AlexNet](img/alexnet.jpeg)
 
 ## Training
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
 - Initial **Learning Rate** has been set to `0.01`
 - In AlexNet the learning rate was reduced manually 3 times, by a factor of 10 ( 0.01 -> 0.001 -> 0.0001 -> 0.00001).
-  However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5 if there are no improvements after 5 epochs
+  However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 5 epochs
 
 ## Results
 
      
     
 
-
-
+# References
+<a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
+<a id="https://arxiv.org/abs/1502.03167">[2]</a> Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
+<a id="http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf">[3]</a> Understanding the difficulty of training deep feedforward neural networks
 
 
