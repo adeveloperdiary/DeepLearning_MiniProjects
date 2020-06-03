@@ -14,7 +14,8 @@ class InitExecutor(object):
         self.optimizer = None
         self.scheduler = None
         self.criterion = None
-        self.loss_hist = None
+        self.train_loss_hist = None
+        self.val_loss_hist = None
         self.pbar = None
         self.last_checkpoint_file = None
         self.load_from_check_point = None
@@ -22,7 +23,10 @@ class InitExecutor(object):
         self.tracking = None
         self.tb_writer = None
         self.val_acc = None
+        self.train_acc = None
         self.train_loss = None
+        self.val_loss = None
+        self.learning_rate = None
 
         self.CHECKPOINT_PATH = None
         self.CHECKPOINT_INTERVAL = None

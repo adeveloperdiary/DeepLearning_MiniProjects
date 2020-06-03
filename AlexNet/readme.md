@@ -138,15 +138,23 @@ Here is the original architecture diagram from the paper.
   However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 5 epochs
 
 ## Results
-Here is the plot of Training Loss and Validation Accuracy after 200 Epochs:
+Here is the plot of Training/Validation Loss/Accuracy after 100 Epochs. The model is clearly over-fitting, 
+more data augmentation will probably help. 
 
-![Val Accuracy](img/plot.png)
+![Training Plot](img/plot.png)
+
+Even though `ReduceLROnPlateau` scheduler was used to decay learning rate, it wasn't effective as the training error kept reducing.
+The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not shown in the plot). 
+
+![Training Plot](img/lr.png)
     
-    
-- **Training Loss:** 0.0488
-- **Validation Accuracy:** 59.343%
-- **Learning Rate:** 0.0003125
-    
+
+| **epochs**             | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
+|:----------------------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
+| 100                    | 0\.0777           | 46\.5%                  | 99\.4%                | 0\.01             |
+| 200 \( not in chart \) | 0\.0488           | 59\.3%                  | 99\.6%                | 0\.0003125        |
+
+- The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.      
 
 ## References
 <a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks

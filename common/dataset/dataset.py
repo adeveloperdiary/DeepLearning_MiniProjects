@@ -39,17 +39,6 @@ class ClassificationDataset(torch.utils.data.Dataset):
         # Convert the image from BGR to RGB
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        if self.transform:
-            # Create the dict needed for transformation
-            transform_input = {
-                'image': image
-            }
-            # Transform the image
-            transform_output = self.transform(**transform_input)
-
-            # Get the transformed image
-            image = transform_output['image']
-
         if self.rgb_means:
             # Split the image to separate channel.
             # Since we have already converted the image from BGR to RGB
@@ -63,11 +52,22 @@ class ClassificationDataset(torch.utils.data.Dataset):
 
             # Merge the channels
             image = cv2.merge([R, G, B])
-            # Convert the image to PyTorch Tensor
-            image = torch.as_tensor(image, dtype=torch.float32)
-        else:
-            # Convert the image to PyTorch Tensor
-            image = torch.as_tensor(image, dtype=torch.float32)
+
+        if self.transform:
+            # Create the dict needed for transformation
+            transform_input = {
+                'image': image
+            }
+            # Transform the image
+            transform_output = self.transform(**transform_input)
+
+            # Get the transformed image
+            image = transform_output['image']
+
+        # Convert the image to PyTorch Tensor
+        image = torch.as_tensor(image, dtype=torch.float32)
+
+        if not self.rgb_means:
             # Basic Normalization by dividing 255.0
             image /= 255.0
 

@@ -56,7 +56,10 @@ class BaseExecutor(InitExecutor):
     def init_temp_arrays_for_tensor_board(self):
         # Reset the temp lists
         self.val_acc = []
+        self.val_loss = []
         self.train_loss = []
+        self.train_acc = []
+        self.learning_rate = []
 
     def forward_backward_pass(self, images, labels, epoch, i):
         """
@@ -84,7 +87,7 @@ class BaseExecutor(InitExecutor):
         loss = self.criterion(output, labels.squeeze())
 
         # Calculate the average loss
-        self.loss_hist.send(loss.item())
+        self.train_loss_hist.send(loss.item())
 
         # compute gradients using back propagation
         if self.FP16_MIXED:
@@ -98,11 +101,10 @@ class BaseExecutor(InitExecutor):
         self.optimizer.step()
 
         # Update Progress Bar with the running average loss. Later add the validation accuracy
-        self.pbar.set_postfix(epoch=f" {epoch}, loss= {round(self.loss_hist.value, 4)}", refresh=True)
+        self.pbar.set_postfix(epoch=f" {epoch}, loss= {round(self.train_loss_hist.value, 4)}", refresh=True)
         self.pbar.update()
 
-        # add to train loss
-        self.train_loss.append((round(self.loss_hist.value, 4), (epoch - 1) * len(self.train_data_loader) + i))
+        return output
 
     def calculate_validation_loss_accuracy(self):
         """
@@ -111,6 +113,8 @@ class BaseExecutor(InitExecutor):
 
         # Set the model to eval mode.
         self.model.eval()
+
+        self.val_loss_hist = AverageLoss()
 
         # global variable
         correct = 0
@@ -125,34 +129,49 @@ class BaseExecutor(InitExecutor):
                 labels = labels.to(self.DEVICE)
 
                 # Forward pass
-                outputs = self.model(images)
+                predictions = self.model(images)
 
-                # Output dimension is [ batch x num classes ].
-                # Each value is a probability of the corresponding class
-                # the torch.max() function is similar to the np.argmax() function,
-                # where dim is the dimension to reduce.
-                # outputs.data is not needed as from pytorch version 0.4.0
-                # its no longer needed to access the underlying data of the tensor.
-                # the first value in the tuple is the actual probability and
-                # the 2nd value is the indexes corresponding to the max probability for that row
-                # refer following url for more details
-                # https://pytorch.org/docs/master/generated/torch.max.html
-                # Example output : tuple([[0.42,0.56,0.86,0.45]],[[4,2,3,8]])
-                _, predicted = torch.max(outputs, dim=1)
+                # Calculate the loss
+                loss = self.criterion(predictions, labels.squeeze())
 
-                # labels tensor is of dimension [ batch x 1 ],
-                # hence labels.size(0) will provide the number of images / batch size
-                total += labels.size(0)
+                total, correct = self.cal_prediction(predictions, labels, total, correct)
 
-                # Calculate corrected classified images.
-                # both are 2D tensor hence can be compared against each other
-                # Need to call .item() as both predicted and labels are 2D, the
-                # resulting output of (predicted == labels).sum() is also 2D Tensor.
-                # Hence to get a Python number from a tensor containing a single value,
-                # we need to call .item()
-                # Example: [[15]] => 15
-                correct += (predicted == labels).sum().item()
+                # Calculate the average loss
+                self.val_loss_hist.send(loss.item())
 
+        # calculate the accuracy in percentage
+        accuracy = (100 * correct / total)
+        return accuracy
+
+    def prediction_accuracy(self):
+        """
+            This function is for predicting test accuracy
+        """
+
+        # Set the model to eval mode.
+        self.model.eval()
+
+        # global variable
+        correct = 0
+        total = 0
+        pbar = tqdm(total=len(self.test_data_loader), bar_format='{l_bar}{bar:10}{r_bar}{bar:-10b}', unit=' batches', ncols=200)
+
+        # with no gradient mode on
+        with torch.no_grad():
+            # Loop through the validation data loader
+            for images, labels, _ in self.test_data_loader:
+                # Move the tensors to GPU
+                images = images.to(self.DEVICE)
+                labels = labels.to(self.DEVICE)
+
+                # Forward pass
+                predictions = self.model(images)
+
+                total, correct = self.cal_prediction(predictions, labels, total, correct)
+
+                pbar.update()
+
+        pbar.close()
         # calculate the accuracy in percentage
         accuracy = (100 * correct / total)
         return accuracy
@@ -164,7 +183,7 @@ class BaseExecutor(InitExecutor):
         """
         self.CHECKPOINT_PATH = f'{self.INPUT_DIR}/checkpoint/{datetime.now().strftime("%b-%d-%Y-%H-%M-%S")}'
 
-    def init_training_loop(self):
+    def pre_training_loop_ops(self):
         """
             This function is for defining common steps before starting the each training loop.
         """
@@ -173,10 +192,35 @@ class BaseExecutor(InitExecutor):
         self.model.train()
 
         # Reset the average losses
-        self.loss_hist.reset()
+        self.train_loss_hist.reset()
 
         # Initialize the progress bar
         self.pbar = tqdm(total=len(self.train_data_loader), bar_format='{l_bar}{bar:10}{r_bar}{bar:-10b}', unit=' batches', ncols=200)
+
+    def post_training_loop_ops(self, epoch, train_accuracy):
+        # add to train loss
+        self.train_loss.append((round(self.train_loss_hist.value, 4), epoch))
+
+        # Train Accuracy for the epoch
+        self.train_acc.append((round(train_accuracy, 3), epoch))
+
+        eval_accuracy = self.calculate_validation_loss_accuracy()
+
+        current_lr = self.get_lr()
+
+        # Display the validation loss/accuracy in the progress bar
+        self.pbar.set_postfix(
+            epoch=f"{epoch}, loss={round(self.train_loss_hist.value, 4)}, val acc={round(eval_accuracy, 3)}, train acc={round(train_accuracy, 3)}, lr={current_lr}",
+            refresh=False)
+
+        # Add to validation loss
+        self.val_acc.append((round(eval_accuracy, 3), epoch))
+        self.val_loss.append((round(self.val_loss_hist.value, 4), epoch))
+
+        self.learning_rate.append((current_lr, epoch))
+
+        # Save the model ( if needed )
+        self.save_checkpoint(epoch)
 
     def save_checkpoint(self, epoch):
         """
@@ -189,7 +233,7 @@ class BaseExecutor(InitExecutor):
                 os.makedirs(self.CHECKPOINT_PATH)
 
             file_name = f'{self.CHECKPOINT_PATH}/{self.PROJECT_NAME}_checkpoint_{epoch}.pth'
-            self.logger.info(f"\tSaving checkpoint [{file_name}]...")
+            self.logger.info(f"\n\tSaving checkpoint [{file_name}]...")
 
             # Create the checkpoint file
             checkpoint = {
@@ -211,11 +255,14 @@ class BaseExecutor(InitExecutor):
                 file.writelines('\n'.join([file_name, self.tb_writer.get_logdir()]))
 
             # Write to tensor board
-            for y, x in self.train_loss:
-                self.tb_writer.add_scalar("Loss/train", y, x)
+            for (tr_y, tr_x), (val_y, val_x) in zip(self.train_loss, self.val_loss):
+                self.tb_writer.add_scalars("Loss", {'train': tr_y, 'val': val_y}, tr_x)
 
-            for y, x in self.val_acc:
-                self.tb_writer.add_scalar("Accuracy/val", y, x)
+            for (tr_y, tr_x), (val_y, val_x) in zip(self.train_acc, self.val_acc):
+                self.tb_writer.add_scalars("Accuracy", {'train': tr_y, 'val': val_y}, tr_x)
+
+            for y, x in self.learning_rate:
+                self.tb_writer.add_scalar("Learning Rate", y, x)
 
             # Reset the arrays
             self.init_temp_arrays_for_tensor_board()
@@ -294,3 +341,33 @@ class BaseExecutor(InitExecutor):
 
         # save the model graph to tensor board
         self.tb_writer.add_graph(self.model, images)
+
+    def get_lr(self):
+        for param_group in self.optimizer.param_groups:
+            return param_group['lr']
+
+    @staticmethod
+    def cal_prediction(predictions, labels, total, correct):
+        # Output dimension is [ batch x num classes ].
+        # Each value is a probability of the corresponding class
+        # the torch.max() function is similar to the np.argmax() function,
+        # where dim is the dimension to reduce.
+        # outputs.data is not needed as from pytorch version 0.4.0
+        # its no longer needed to access the underlying data of the tensor.
+        # the first value in the tuple is the actual probability and
+        # the 2nd value is the indexes corresponding to the max probability for that row
+        # refer following url for more details
+        # https://pytorch.org/docs/master/generated/torch.max.html
+        # Example output : tuple([[0.42,0.56,0.86,0.45]],[[4,2,3,8]])
+        _, predicted = torch.max(predictions, dim=1)
+
+        # labels tensor is of dimension [ batch x 1 ],
+        # hence labels.size(0) will provide the number of images / batch size
+        total += labels.size(0)
+
+        # Reduce the dimension of labels from [batch x 1] -> [batch]
+        labels = labels.squeeze()
+
+        correct += (predicted == labels).sum().item()
+
+        return total, correct

@@ -54,7 +54,7 @@ class Executor(BaseExecutor):
         self.criterion = torch.nn.CrossEntropyLoss()
 
         # Loss Average
-        self.loss_hist = AverageLoss()
+        self.train_loss_hist = AverageLoss()
 
         # Enable Precision Mode
         self.enable_precision_mode()
@@ -77,7 +77,8 @@ class Executor(BaseExecutor):
         self.logger.info("Training starting now ...")
         for epoch in range(start_epoch, self.EPOCHS + 1):
 
-            self.init_training_loop()
+            # Invoke the pre training operations
+            self.pre_training_loop_ops()
 
             correct = 0
             total = 0
@@ -85,36 +86,37 @@ class Executor(BaseExecutor):
                 images = images.to(self.DEVICE)
                 labels = labels.to(self.DEVICE)
 
-                self.forward_backward_pass(images, labels, epoch, i)
+                predictions = self.forward_backward_pass(images, labels, epoch, i)
 
                 # Calculate Train Accuracy
-                # _, predicted = torch.max(outputs, dim=1)
-                # total += labels.size(0)
-                # correct += (predicted == labels).sum().item()
+                total, correct = self.cal_prediction(predictions, labels, total, correct)
 
-            # Train Accuracy for the epoch
-            # train_accuracy = (100 * correct / total)
+            # Calculate the training accuracy
+            train_accuracy = (100 * correct) / total
 
-            eval_accuracy = self.calculate_validation_loss_accuracy()
+            # Invoke the post training operations
+            self.post_training_loop_ops(epoch, train_accuracy)
 
             # Scheduler step() function
-            self.scheduler.step(self.loss_hist.value)
-
-            # Display the validation loss/accuracy in the progress bar
-            self.pbar.set_postfix(
-                epoch=f" {epoch}, loss = {round(self.loss_hist.value, 4)}, val acc= {round(eval_accuracy, 3)}, lr= {self.get_lr()} ",
-                refresh=False)
+            self.scheduler.step(self.train_loss_hist.value)
 
             # Close the progress bar
             self.pbar.close()
 
-            # Add to validation loss
-            self.val_acc.append((round(eval_accuracy, 3), epoch))
-
-            # Save the model ( if needed )
-            self.save_checkpoint(epoch)
-
         self.tb_writer.close()
+
+    def prediction(self):
+        self.logger.info("Building model ...")
+        self.build_model()
+
+        # Load model from checkpoint
+        self.load_checkpoint()
+
+        test_accuracy = self.prediction_accuracy()
+
+        self.logger.info(f"Test Prediction Accuracy is {test_accuracy}")
+
+        return test_accuracy
 
 
 if __name__ == '__main__':
@@ -136,9 +138,16 @@ if __name__ == '__main__':
                                     training=False,
                                     batch_size=16, shuffle=True, num_workers=4, pin_memory=True, drop_last=False)
 
-    e = Executor("", {'TRAIN': train_data_loader, 'VAL': val_data_loader}, config=config)
+    test_data_loader = getDataLoader(csv_path=config['TRAIN_CSV'], images_path=config['TRAIN_DIR'], transformation=test_transformation,
+                                     fields=fields,
+                                     training=False,
+                                     batch_size=1024, shuffle=False, num_workers=4, pin_memory=True, drop_last=False)
+
+    e = Executor("", {'TRAIN': train_data_loader, 'VAL': val_data_loader, 'TEST': val_data_loader}, config=config)
 
     start = timeit.default_timer()
     e.train()
     stop = timeit.default_timer()
     print(f'Training Time: {round((stop - start) / 60, 2)} Minutes')
+
+    # e.prediction()
