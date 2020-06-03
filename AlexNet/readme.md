@@ -158,9 +158,9 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
 - 200 epochs took 60 minutes to train.     
 
 ## How to run the scripts
-- **Pre-Processing**
-    - Run the following file:
-        - `common.preprocessing.image_dir_preprocessor.py`
+### Pre-Processing
+- Run the following file:
+    - `common.preprocessing.image_dir_preprocessor.py`
     - The properties can be changed at `properties.py`. Here is how the configurations are defined.
         ```python      
         # Provide the input preprocessing location
@@ -181,9 +181,9 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
         def read_class_labels(path):
             return path.split('/')[-1].split('.')[-1]
         ```
-- **Training**
-    - Run the following file:
-        - AlexNet.executor.py
+### Training
+- Run the following file:
+    - `AlexNet.executor.py`
         
 ## References
 <a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
