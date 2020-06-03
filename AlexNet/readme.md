@@ -138,11 +138,16 @@ Here is the original architecture diagram from the paper.
   However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 5 epochs
 
 ## Results
+Here is the plot of Training Loss after 200 Epochs:
 
-     
+![Train Loss](img/train_loss.png)
+
+Here is the plot of Validation Accuracy after 200 Epochs:
+
+![Val Accuracy](img/train_loss.png)     
     
 
-# References
+## References
 <a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
 
 <a id="https://arxiv.org/abs/1502.03167">[2]</a> Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift

@@ -12,9 +12,9 @@ config['VALID_DIR'] = f"{config['INPUT_DIR']}/val"
 config['TRAIN_CSV'] = f"{config['INPUT_DIR']}/train.csv"
 config['VALID_CSV'] = f"{config['INPUT_DIR']}/val.csv"
 
-config['CHECKPOINT_INTERVAL'] = 2
+config['CHECKPOINT_INTERVAL'] = 10
 config['NUM_CLASSES'] = 256
-config['EPOCHS'] = 10
+config['EPOCHS'] = 201
 
 # ======================================= DEFAULT ============================================= #
 
