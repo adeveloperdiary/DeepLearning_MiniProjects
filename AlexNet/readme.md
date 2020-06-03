@@ -58,8 +58,8 @@ Following Data Augmentations are implemented using the albumentations library in
 1. Horizontal Reflection ( Flip )
 2. Random Crop of 227x227
     - The AlexNet paper uses 224x224 random crop, however many believe the actual value is 227 instead of 224.
-    - Also AlexNet uses 5 Crops 1 Center Crop and 4 sides crop, total 10 crops per images. However here we will
-      Just use RandomCrop() feature of albumentations library.        
+    - Also AlexNet uses 5 Crops ( 1 Center Crop and 4 sides crop), hence total 10 crops per images. However here we will
+      Just use RandomCrop() feature of albumentations library. The effect should be very similar.        
 3.  PCA Color Augmentation
     - Even though the AlexNet paper uses PCA Color Augmentation, this PyTorch implementation does not use that, as
       the batch normalization is powerful  to cancel the effect of PCA Color Augmentation. Please refer the github 
@@ -69,7 +69,25 @@ Following Data Augmentations are implemented using the albumentations library in
       
     
 #### Testing Data Augmentation
-1. Random Crop of 227x227 ( Same as training )        
+1. Random Crop of 227x227 ( Same as training )    
+
+## CNN Architecture
+There are few differences in the CNN Model Architecture between this implementation and the AlexNet paper:
+
+1. Use of Batch Normalization after the activation layer instead of Local Response Normalization. 
+   AlexNet paper does not use Batch Normalization as it wasn't published at that time. Batch Normalization
+   is more robust than Local Response Normalization.
+2. Use Max Pooling instead of Average Pooling.
+3. Use more Dropout layers ( after MaxPool layers ) to reduce over-fitting.
+4. Use Xavier Normal initialization instead of initializing just from a normal distribution. 
+   The He paper also refer the AlexNet paper with the following text:
+   
+   `Recent deep CNNs are mostly initialized by random weights drawn from Gaussian distributions`
+
+
+
+      
+    
 
 
 
