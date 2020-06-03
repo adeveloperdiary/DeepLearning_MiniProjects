@@ -142,6 +142,11 @@ Here is the plot of Training Loss and Validation Accuracy after 200 Epochs:
 
 ![Val Accuracy](img/plot.png)
     
+    
+- **Training Loss:** 0.0488
+- **Validation Accuracy:** 59.343%
+- **Learning Rate:** 0.0003125
+    
 
 ## References
 <a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
