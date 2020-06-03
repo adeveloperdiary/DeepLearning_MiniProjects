@@ -157,6 +157,34 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
 - 200 epochs took 60 minutes to train.     
 
+## How to run the scripts
+- **Pre-Processing**
+    - Run the following file:
+        - `common.preprocessing.image_dir_preprocessor.py`
+    - The properties can be changed at `properties.py`. Here is how the configurations are defined.
+        ```python      
+        # Provide the input preprocessing location
+        INPUT_PATH = '/media/4TB/datasets/caltech/256_ObjectCategories'
+        # Provide the output location to store the processed images
+        OUTPUT_PATH = '/media/4TB/datasets/caltech/processed'
+        # Validation split. Range - [ 0.0 - 1.0 ]
+        VALIDATION_SPLIT = 0.2
+        # Output image dimension. ( height,width )
+        OUTPUT_DIM = (256, 256)
+        # If RGB mean is needed, set this to True
+        RGB_MEAN = True
+        # If this is false, then the images will only be resized without preserving the aspect ratio.
+        CENTER_CROP = True
+        
+        
+        # Function to provide the logic to parse the class labels from the directory.
+        def read_class_labels(path):
+            return path.split('/')[-1].split('.')[-1]
+        ```
+- **Training**
+    - Run the following file:
+        - AlexNet.executor.py
+        
 ## References
 <a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
 
