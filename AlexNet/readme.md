@@ -4,16 +4,16 @@ common factors that were taken care such as:
 
 1.  Data Augmentation is outside of main class and can be defined in a 
     semi declarative way using albumentations library inside the transformation.py class.
-2.  Automatic Loading and Saving models from and to checkpoint. 
-3.  Integration with Tensor Board. The Tensor Board data is being written after a checkpoint save.
+2.  Automatic Loading and Saving models from and to *checkpoint*. 
+3.  Integration with *Tensor Board*. The Tensor Board data is being written after a checkpoint save.
     This is to make sure that, upon restarting the training, the plots are properly drawn.
         A.  Both Training Loss and Validation Accuracy is being written. The code will be modified to 
             also include Training Accuracy and Validation Loss.
         B.  The model is also being stored as graph for visualization.
-4.  Logging has been enabled in both console and external file. The external file name can be configured 
+4.  *Logging* has been enabled in both console and external file. The external file name can be configured 
     using the configuration in properties.py.
-5.  Multi-GPU Training has been enabled using torch.nn.DataParallel() functionality. 
-6.  Mixed Precision has been enabled using Nvidia's apex library as the PyTorch 1.6 is not released yet.
+5.  *Multi-GPU Training* has been enabled using `torch.nn.DataParallel()` function. 
+6.  *Mixed Precision* has been enabled using Nvidia's apex library as the PyTorch 1.6 is not released yet.
     None:   At this moment both Multi-GPU and Mixed Precision can not be using together. This will be fixed 
             once PyTorch 1.6 has been released. 
 
@@ -57,9 +57,11 @@ Following Data Augmentations are implemented using the albumentations library in
 #### Training Data Augmentation    
 1. Horizontal Reflection ( Flip )
 2. Random Crop of 227x227
+
     - The AlexNet paper uses 224x224 random crop, however many believe the actual value is 227 instead of 224.
     - Also AlexNet uses 5 Crops ( 1 Center Crop and 4 sides crop), hence total 10 crops per images. However here we will
-      Just use RandomCrop() feature of albumentations library. The effect should be very similar.        
+      Just use RandomCrop() feature of albumentations library. The effect should be very similar. 
+             
 3.  PCA Color Augmentation
     - Even though the AlexNet paper uses PCA Color Augmentation, this PyTorch implementation does not use that, as
       the batch normalization is powerful  to cancel the effect of PCA Color Augmentation. Please refer the github 
@@ -69,20 +71,57 @@ Following Data Augmentations are implemented using the albumentations library in
       
     
 #### Testing Data Augmentation
-1. Random Crop of 227x227 ( Same as training )    
+1. Random Crop of 227x227 ( Same as training )
+2. Mean RGB Normalization. 
 
 ## CNN Architecture
 There are few differences in the CNN Model Architecture between this implementation and the AlexNet paper:
 
-1. Use of Batch Normalization after the activation layer instead of Local Response Normalization. 
-   AlexNet paper does not use Batch Normalization as it wasn't published at that time. Batch Normalization
-   is more robust than Local Response Normalization.
-2. Use Max Pooling instead of Average Pooling.
+1. Use of *Batch Normalization* after the activation layer instead of *Local Response Normalization*. 
+   AlexNet paper does not use Batch Normalization as it wasn't published at that time. Study indicates 
+   Batch Normalization is more robust than Local Response Normalization.
+2. Use *Max Pooling* instead of Average Pooling.
 3. Use more Dropout layers ( after MaxPool layers ) to reduce over-fitting.
-4. Use Xavier Normal initialization instead of initializing just from a normal distribution. 
+4. Use *Xavier Normal* initialization instead of initializing just from a normal distribution. 
    The He paper also refer the AlexNet paper with the following text:
    
    `Recent deep CNNs are mostly initialized by random weights drawn from Gaussian distributions`
+
+| **Layer Type** | **Output Size** | **Kernel Size** | **# of Kernels** | **Stride** | **Padding** |
+|----------------|-----------------|-----------------|------------------|------------|-------------|
+| Input Image    | 227 x 227 x 3   |                 |                  |            |             |
+| Conv2d         | 57 x 57 x 96    | 11              | 96               | 4          |             |
+| ReLU           | 57 x 57 x 96    |                 |                  |            |             |
+| BatchNorm2d    | 57 x 57 x 96    |                 |                  |            |             |
+| MaxPool2d      | 28 x 28 x 96    | 3               |                  | 2          |             |
+| Dropout\*      | 28 x 28 x 96    |                 |                  |            |             |
+| Conv2d         | 28 x 28 x 256   | 5               | 256              |            | 2           |
+| ReLU           | 28 x 28 x 256   |                 |                  |            |             |
+| BatchNorm2d    | 28 x 28 x 256   |                 |                  |            |             |
+| MaxPool2d      | 13 x 13 x 256   | 3               |                  | 2          |             |
+| Dropout\*      | 13 x 13 x 256   |                 |                  |            |             |
+| Conv2d         | 13 x 13 x 384   | 3               | 384              |            | 1           |
+| ReLU           | 13 x 13 x 384   |                 |                  |            |             |
+| BatchNorm2d    | 13 x 13 x 384   |                 |                  |            |             |
+| Conv2d         | 13 x 13 x 384   | 3               | 384              |            | 1           |
+| ReLU           | 13 x 13 x 384   |                 |                  |            |             |
+| BatchNorm2d    | 13 x 13 x 384   |                 |                  |            |             |
+| Conv2d         | 13 x 13 x 256   | 3               | 256              |            | 1           |
+| ReLU           | 13 x 13 x 256   |                 |                  |            |             |
+| BatchNorm2d    | 13 x 13 x 256   |                 |                  |            |             |
+| MaxPool2d      | 6 x 6 x 256     | 3               |                  | 2          |             |
+| Dropout\*      | 6 x 6 x 256     |                 |                  |            |             |
+| Flatten\(\)    | 6 x 6 x 256     |                 |                  |            |             |
+| Linear         | 4096            |                 |                  |            |             |
+| ReLU           | 4096            |                 |                  |            |             |
+| BatchNorm2d    | 4096            |                 |                  |            |             |
+| Dropout        | 4096            |                 |                  |            |             |
+| Linear         | 4096            |                 |                  |            |             |
+| ReLU           | 4096            |                 |                  |            |             |
+| BatchNorm2d    | 4096            |                 |                  |            |             |
+| Dropout        | 4096            |                 |                  |            |             |
+| Linear         | 256             |                 |                  |            |             |
+| LogSoftmax     | 256             |                 |                  |            |             |
 
 
 
