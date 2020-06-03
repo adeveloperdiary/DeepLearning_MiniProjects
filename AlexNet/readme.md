@@ -85,7 +85,7 @@ There are few differences in the CNN Model Architecture between this implementat
 4. Use *Xavier Normal* initialization instead of initializing just from a normal distribution. 
    The He paper also refer the AlexNet paper with the following text:
    
-   `Recent deep CNNs are mostly initialized by random weights drawn from Gaussian distributions`
+ > Recent deep CNNs are mostly initialized by random weights drawn from Gaussian distributions
 
 | **Layer Type** | **Output Size** | **Kernel Size** | **# of Kernels** | **Stride** | **Padding** |
 |----------------|-----------------|-----------------|------------------|------------|-------------|
