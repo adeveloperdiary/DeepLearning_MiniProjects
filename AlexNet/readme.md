@@ -134,7 +134,7 @@ Here is the original architecture diagram from the paper.
 ## Training
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
 - Initial **Learning Rate** has been set to `0.01`
-- In AlexNet the learning rate was reduced manually 3 times, by a factor of 10 ( 0.01 -> 0.001 -> 0.0001 -> 0.00001)
+- In AlexNet the learning rate was reduced manually 3 times, by a factor of 10 ( 0.01 -> 0.001 -> 0.0001 -> 0.00001).
   However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5 if there are no improvements after 5 epochs
 
 ## Results
