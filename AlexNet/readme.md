@@ -210,7 +210,7 @@ config["LOGLEVEL"] = "INFO"
 ```
 
 ### Console Output
-I am executing the script remotely from pycharm. Here is a sample output
+I am executing the script remotely from pycharm. Here is a sample output of the train.py
 
 ```
 sudo+ssh://home@192.168.50.106:22/home/home/.virtualenvs/dl4cv/bin/python3 -u /home/home/Documents/synch/mini_projects/AlexNet/executor.py
