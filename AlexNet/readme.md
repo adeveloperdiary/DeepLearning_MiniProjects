@@ -138,13 +138,9 @@ Here is the original architecture diagram from the paper.
   However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 5 epochs
 
 ## Results
-Here is the plot of Training Loss after 200 Epochs:
+Here is the plot of Training Loss and Validation Accuracy after 200 Epochs:
 
-![Train Loss](img/train_loss.png)
-
-Here is the plot of Validation Accuracy after 200 Epochs:
-
-![Val Accuracy](img/val_acc.png)
+![Val Accuracy](img/plot.png)
     
 
 ## References
