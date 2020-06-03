@@ -188,6 +188,7 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
         - The test.py will automatically pickup the last saved checkpoint by training
 - The properties can be changed at `AlexNet.properties.py`. Here is how the configurations are defined.
 ```python
+    config = dict()
     config['PROJECT_NAME'] = 'alexnet'
     config['INPUT_DIR'] = '/media/4TB/datasets/caltech/processed'
 
