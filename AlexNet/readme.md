@@ -128,7 +128,7 @@ There are few differences in the CNN Model Architecture between this implementat
 ### Architecture Diagram
 Here is the original architecture diagram from the paper.
 
-![Image of Yaktocat](img/AlexNet-A-typical-DCNN-model-6.png)
+![Image of Yaktocat](img/alexnet.jpeg)
 
       
     
