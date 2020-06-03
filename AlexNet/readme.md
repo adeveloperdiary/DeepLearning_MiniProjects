@@ -209,6 +209,23 @@ config["LOGFILE"] = "output.log"
 config["LOGLEVEL"] = "INFO"
 ```
 
+### Console Output
+I am executing the script remotely from pycharm. Here is a sample output
+
+```
+sudo+ssh://home@192.168.50.106:22/home/home/.virtualenvs/dl4cv/bin/python3 -u /home/home/Documents/synch/mini_projects/AlexNet/executor.py
+Building model ...
+Training starting now ...
+100%|██████████| 95/95 [00:19<00:00,  4.93 batches/s, epoch=1, loss=5.5523, val acc=12.708, train acc=7.348, lr=0.01]                                                                                   
+100%|██████████| 95/95 [00:18<00:00,  5.17 batches/s, epoch=2, loss=4.7448, val acc=16.024, train acc=13.458, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:18<00:00,  5.25 batches/s, epoch=3, loss=4.2328, val acc=18.474, train acc=18.54, lr=0.01]                                                                                   
+100%|██████████| 95/95 [00:18<00:00,  5.13 batches/s, epoch=4, loss=3.8729, val acc=20.794, train acc=22.521, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:18<00:00,  5.08 batches/s, epoch=5, loss=3.5686, val acc=24.698, train acc=26.456, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:18<00:00,  5.15 batches/s, epoch=6, loss=3.2997, val acc=27.017, train acc=30.062, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:18<00:00,  5.16 batches/s, epoch=7, loss=3.0673, val acc=27.916, train acc=33.68, lr=0.01]                                                                                   
+100%|██████████| 95/95 [00:18<00:00,  5.05 batches/s, epoch=8, loss=2.8208, val acc=29.99, train acc=37.36, lr=0.01]                                                                                    
+100%|██████████| 95/95 [00:18<00:00,  5.23 batches/s, epoch=9, loss=2.6457, val acc=31.787, train acc=40.23, lr=0.01]
+```
 
      
 ## References
