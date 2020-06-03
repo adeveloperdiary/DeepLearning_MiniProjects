@@ -4,16 +4,16 @@ common factors that were taken care such as:
 
 1.  Data Augmentation is outside of main class and can be defined in a 
     semi declarative way using albumentations library inside the transformation.py class.
-2.  Automatic Loading and Saving models from and to *checkpoint*. 
-3.  Integration with *Tensor Board*. The Tensor Board data is being written after a checkpoint save.
+2.  Automatic Loading and Saving models from and to **checkpoint**. 
+3.  Integration with **Tensor Board**. The Tensor Board data is being written after a checkpoint save.
     This is to make sure that, upon restarting the training, the plots are properly drawn.
         A.  Both Training Loss and Validation Accuracy is being written. The code will be modified to 
             also include Training Accuracy and Validation Loss.
         B.  The model is also being stored as graph for visualization.
-4.  *Logging* has been enabled in both console and external file. The external file name can be configured 
+4.  **Logging** has been enabled in both console and external file. The external file name can be configured 
     using the configuration in properties.py.
-5.  *Multi-GPU Training* has been enabled using `torch.nn.DataParallel()` function. 
-6.  *Mixed Precision* has been enabled using Nvidia's apex library as the PyTorch 1.6 is not released yet.
+5.  **Multi-GPU Training** has been enabled using `torch.nn.DataParallel()` function. 
+6.  **Mixed Precision** has been enabled using Nvidia's apex library as the PyTorch 1.6 is not released yet.
     None:   At this moment both Multi-GPU and Mixed Precision can not be using together. This will be fixed 
             once PyTorch 1.6 has been released. 
 
@@ -21,7 +21,7 @@ There are few differences between this implementation and original paper mostly 
 Each section will elaborate difference in detail along with additional explanations. 
 
 ## Dataset
-The AlexNet paper uses ImageNet dataset, however here we will be using Caltech256 dataset which consists of 256 
+The AlexNet paper uses ImageNet dataset, however here we will be using **Caltech256** dataset which consists of 256 
 Categories and around 30K images. Any decent GPU should be able to train using this dataset in much lesser time than 
 ImageNet.
 
@@ -77,15 +77,17 @@ Following Data Augmentations are implemented using the albumentations library in
 ## CNN Architecture
 There are few differences in the CNN Model Architecture between this implementation and the AlexNet paper:
 
-1. Use of *Batch Normalization* after the activation layer instead of *Local Response Normalization*. 
+1. Use of **Batch Normalization** after the activation layer instead of **Local Response Normalization**. 
    AlexNet paper does not use Batch Normalization as it wasn't published at that time. Study indicates 
    Batch Normalization is more robust than Local Response Normalization.
-2. Use *Max Pooling* instead of Average Pooling.
+2. Use **Max Pooling** instead of Average Pooling.
 3. Use more Dropout layers ( after MaxPool layers ) to reduce over-fitting.
-4. Use *Xavier Normal* initialization instead of initializing just from a normal distribution. 
+4. Use **Xavier Normal** initialization instead of initializing just from a normal distribution. 
    The He paper also refer the AlexNet paper with the following text:
    
  > Recent deep CNNs are mostly initialized by random weights drawn from Gaussian distributions
+
+### Layers 
 
 | **Layer Type** | **Output Size** | **Kernel Size** | **# of Kernels** | **Stride** | **Padding** |
 |----------------|-----------------|-----------------|------------------|------------|-------------|
@@ -123,7 +125,10 @@ There are few differences in the CNN Model Architecture between this implementat
 | Linear         | 256             |                 |                  |            |             |
 | LogSoftmax     | 256             |                 |                  |            |             |
 
+### Architecture Diagram
+Here is the original architecture diagram from the paper.
 
+![Image of Yaktocat](img/AlexNet-A-typical-DCNN-model-6.png)
 
       
     
