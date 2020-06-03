@@ -140,11 +140,11 @@ Here is the original architecture diagram from the paper.
 ## Results
 Here is the plot of Training Loss after 200 Epochs:
 
-![Train Loss](img/train_loss.png){:height="50%" width="50%"}
+![Train Loss](img/train_loss.png)
 
 Here is the plot of Validation Accuracy after 200 Epochs:
 
-![Val Accuracy](img/train_loss.png){:height="50%" width="50%"}
+![Val Accuracy](img/val_acc.png)
     
 
 ## References
