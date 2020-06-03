@@ -161,7 +161,7 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
 ### Pre-Processing
 - Run the following file:
     - `common.preprocessing.image_dir_preprocessor.py`
-    - The properties can be changed at `properties.py`. Here is how the configurations are defined.
+    - The properties can be changed at `common.preprocessing.properties.py`. Here is how the configurations are defined.
         ```python      
         # Provide the input preprocessing location
         INPUT_PATH = '/media/4TB/datasets/caltech/256_ObjectCategories'
@@ -181,9 +181,36 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
         def read_class_labels(path):
             return path.split('/')[-1].split('.')[-1]
         ```
-### Training
-- Run the following file:
-    - `AlexNet.executor.py`
+### Training & Testing
+- Run the following files:
+    - `AlexNet.train.py` 
+    - `AlexNet.test.py`
+        - The test.py will automatically pickup the last saved checkpoint by training
+- The properties can be changed at `AlexNet.properties.py`. Here is how the configurations are defined.
+    ```python
+        config['PROJECT_NAME'] = 'alexnet'
+        config['INPUT_DIR'] = '/media/4TB/datasets/caltech/processed'
+    
+        config['TRAIN_DIR'] = f"{config['INPUT_DIR']}/train"
+        config['VALID_DIR'] = f"{config['INPUT_DIR']}/val"
+        
+        config['TRAIN_CSV'] = f"{config['INPUT_DIR']}/train.csv"
+        config['VALID_CSV'] = f"{config['INPUT_DIR']}/val.csv"
+        
+        config['CHECKPOINT_INTERVAL'] = 10
+        config['NUM_CLASSES'] = 256
+        config['EPOCHS'] = 100  
+        
+        config['MULTI_GPU'] = False
+        config['FP16_MIXED'] = False
+        
+        config["LOGFILE"] = "output.log"
+        config["LOGLEVEL"] = "INFO"
+    ```
+
+     
+
+
         
 ## References
 <a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
