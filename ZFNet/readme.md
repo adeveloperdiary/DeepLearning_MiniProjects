@@ -105,7 +105,7 @@ Here are changes suggested in ZFNet:
 None : In PyTorch input image of 224 x 224 can be used as PyTorch ignores the fraction.
 
 Modified parameters are in bold.
-```diff
+
 | **Layer Type** | **Output Size** | **Kernel Size** | **# of Kernels** | **Stride** | **Padding** |
 |----------------|-----------------|-----------------|------------------|------------|-------------|
 | Input Image    | 227 x 227 x 3   |                 |                  |            |             |
@@ -141,7 +141,7 @@ Modified parameters are in bold.
 | Dropout        | 4096            |                 |                  |            |             |
 | Linear         | 256             |                 |                  |            |             |
 | LogSoftmax     | 256             |                 |                  |            |             |
-```
+
 ### Architecture Diagram
 Here is the original architecture diagram from the paper.
 
