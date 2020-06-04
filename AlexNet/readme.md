@@ -155,7 +155,7 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
 | 200 \( not in chart \) | 0\.0488           | 59\.3%                  | 99\.6%                | 0\.0003125        |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
-- 200 epochs took 60 minutes to train.     
+- 200 epochs took 60 minutes in training.     
 
 ## How to run the scripts
 ### Pre-Processing
