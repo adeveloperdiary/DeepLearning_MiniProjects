@@ -23,6 +23,8 @@ There are few differences between this implementation and original AlexNet paper
 For more information on the AlexNet implementation please refer the following github repository. This implementation is 
 based on the AlexNet implementation.  
 
+[Implementation of AlexNet using PyTorch](../AlexNet)
+
 https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet
 
 ## Dataset
