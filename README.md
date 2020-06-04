@@ -19,3 +19,10 @@
   however there are many common factors that were taken care such as Mixed Precision, Tensor Board integration etc
 - Find the details of the project here:
     - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet 
+    
+## 4. Implementation of ZFNet using PyTorch
+
+- ZFNet is a predecessor of AlexNet Paper as it recommended fine tuning AlexNet by visualizing the Convolution
+Network. There are many common factors that were taken care such as Mixed Precision, Tensor Board integration etc
+- Find the details of the project here:
+    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/ZFNet 
