@@ -253,13 +253,15 @@ Training starting now ...
 
      
 ## References
-<a id="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">[1]</a> ImageNet Classification with Deep Convolutional Neural Networks
+[[1] Visualizing and Understanding Convolutional Networks](https://arxiv.org/pdf/1311.2901.pdf)
 
-<a id="https://arxiv.org/abs/1502.03167">[2]</a> Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
+[[2] ImageNet Classification with Deep Convolutional Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
 
-<a id="http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf">[3]</a> Understanding the difficulty of training deep feedforward neural networks
+[[3] Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/abs/1502.03167) 
 
-![[4] Visualizing and Understanding Convolutional Networks](https://arxiv.org/pdf/1311.2901.pdf)
+[[4] Understanding the difficulty of training deep feedforward neural networks](http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf)
+
+
  
 
 
