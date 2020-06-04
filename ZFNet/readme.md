@@ -145,7 +145,7 @@ Modified parameters are in bold.
 ### Architecture Diagram
 Here is the original architecture diagram from the paper.
 
-![Image of ZFNet](img/ZFNet.jpeg)
+![Image of ZFNet](img/zfnet.png)
 
 ## Training
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
