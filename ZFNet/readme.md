@@ -25,8 +25,6 @@ based on the AlexNet implementation.
 
 [Implementation of AlexNet using PyTorch](../AlexNet)
 
-https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet
-
 ## Dataset
 The ZFNet paper uses ImageNet dataset (like AlexNet), however the authors also published their results on **Caltech256** 
 dataset which consists of 256 Categories and around 30K images. Any decent GPU should be able to train using this 
@@ -36,11 +34,11 @@ Hence we will compare our result using the **Caltech256** dataset.
 
 In order to use ImagNet instead of Caltech256, please find the below blog post for more details.
 
-http://www.adeveloperdiary.com/data-science/computer-vision/how-to-prepare-imagenet-dataset-for-image-classification/
+[How to prepare imagenet dataset for image classification](http://www.adeveloperdiary.com/data-science/computer-vision/how-to-prepare-imagenet-dataset-for-image-classification/)
 
 Below is the URL of the Caltech256 Dataset.
 
-http://www.vision.caltech.edu/Image_Datasets/Caltech256/#Details
+[Download Caltech 256 Dataset](/http://www.vision.caltech.edu/Image_Datasets/Caltech256/#Details)
 
 ### Pre-Processing
 The pre-processing steps are same as AlexNet. As ZFNet hasn't recommended any additional improvements. 
