@@ -150,7 +150,7 @@ Here is the original architecture diagram from the paper.
 ## Training
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
 - Initial **Learning Rate** has been set to `0.01`
-- In ZFNet the learning rate was reduced manually 3 times, by a factor of 10 ( 0.01 -> 0.001 -> 0.0001 -> 0.00001).
+- In AlexNet the learning rate was reduced manually 3 times, by a factor of 10 ( 0.01 -> 0.001 -> 0.0001 -> 0.00001).
   However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 5 epochs
 
 ## Results
@@ -159,19 +159,26 @@ more data augmentation will probably help.
 
 ![Training Plot](img/plot.png)
 
-Even though `ReduceLROnPlateau` scheduler was used to decay learning rate, it wasn't effective as the training error kept reducing.
-The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not shown in the plot). 
+Even though `ReduceLROnPlateau` scheduler was used to decay learning rate, it wasn't effective as the training error kept reducing. 
 
 ![Training Plot](img/lr.png)
-    
 
-| **epochs**             | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
-|:----------------------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
-| 100                    | 0\.0777           | 46\.5%                  | 99\.4%                | 0\.01             |
-| 200 \( not in chart \) | 0\.0488           | 59\.3%                  | 99\.6%                | 0\.0003125        |
+### Comparison with AlexNet
+As shown below, the authors of ZFNet were able to achieve 38.8% Accuracy while training from scratch. The implementation 
+here was able to achieve 49.67% on the validation set.   
+
+![Caltech256 Result from paper](img/result.png)
+
+ZFNet error rate (top-5) was 1.7% lower then AlexNet. Here we can see that this implementation has around 3% accuracy 
+improvement than the AlexNet implementation. 
+
+| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
+|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
+| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01             |
+| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01             |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
-- 200 epochs took 60 minutes in training.     
+- 100 training epochs took ~100 minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing
@@ -205,7 +212,7 @@ The scheduler started reducing the lr after around 170 epochs to 0.0003125 (Not 
 - The properties can be changed at `ZFNet.properties.py`. Here is how the configurations are defined.
 ```python
 config = dict()
-config['PROJECT_NAME'] = 'ZFNet'
+config['PROJECT_NAME'] = 'zfnet'
 config['INPUT_DIR'] = '/media/4TB/datasets/caltech/processed'
 
 config['TRAIN_DIR'] = f"{config['INPUT_DIR']}/train"
@@ -229,18 +236,19 @@ config["LOGLEVEL"] = "INFO"
 I am executing the script remotely from pycharm. Here is a sample output of the train.py
 
 ```
-sudo+ssh://home@192.168.50.106:22/home/home/.virtualenvs/dl4cv/bin/python3 -u /home/home/Documents/synch/mini_projects/ZFNet/executor.py
+sudo+ssh://home@192.168.50.106:22/home/home/.virtualenvs/dl4cv/bin/python3 -u /home/home/Documents/synch/mini_projects/ZFNet/train.py
 Building model ...
 Training starting now ...
-100%|██████████| 95/95 [00:19<00:00,  4.93 batches/s, epoch=1, loss=5.5523, val acc=12.708, train acc=7.348, lr=0.01]                                                                                   
-100%|██████████| 95/95 [00:18<00:00,  5.17 batches/s, epoch=2, loss=4.7448, val acc=16.024, train acc=13.458, lr=0.01]                                                                                  
-100%|██████████| 95/95 [00:18<00:00,  5.25 batches/s, epoch=3, loss=4.2328, val acc=18.474, train acc=18.54, lr=0.01]                                                                                   
-100%|██████████| 95/95 [00:18<00:00,  5.13 batches/s, epoch=4, loss=3.8729, val acc=20.794, train acc=22.521, lr=0.01]                                                                                  
-100%|██████████| 95/95 [00:18<00:00,  5.08 batches/s, epoch=5, loss=3.5686, val acc=24.698, train acc=26.456, lr=0.01]                                                                                  
-100%|██████████| 95/95 [00:18<00:00,  5.15 batches/s, epoch=6, loss=3.2997, val acc=27.017, train acc=30.062, lr=0.01]                                                                                  
-100%|██████████| 95/95 [00:18<00:00,  5.16 batches/s, epoch=7, loss=3.0673, val acc=27.916, train acc=33.68, lr=0.01]                                                                                   
-100%|██████████| 95/95 [00:18<00:00,  5.05 batches/s, epoch=8, loss=2.8208, val acc=29.99, train acc=37.36, lr=0.01]                                                                                    
-100%|██████████| 95/95 [00:18<00:00,  5.23 batches/s, epoch=9, loss=2.6457, val acc=31.787, train acc=40.23, lr=0.01]
+100%|██████████| 95/95 [01:33<00:00,  1.02 batches/s, epoch=1, loss=5.4724, val acc=12.741, train acc=7.866, lr=0.01]                                                                                   
+100%|██████████| 95/95 [00:36<00:00,  2.58 batches/s, epoch=2, loss=4.6682, val acc=16.612, train acc=14.038, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:35<00:00,  2.64 batches/s, epoch=3, loss=4.1887, val acc=20.304, train acc=18.688, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:36<00:00,  2.62 batches/s, epoch=4, loss=3.8182, val acc=22.836, train acc=23.244, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:36<00:00,  2.61 batches/s, epoch=5, loss=3.4973, val acc=25.694, train acc=27.669, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:36<00:00,  2.61 batches/s, epoch=6, loss=3.2096, val acc=29.353, train acc=31.423, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:36<00:00,  2.59 batches/s, epoch=7, loss=2.9447, val acc=31.477, train acc=35.477, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:37<00:00,  2.56 batches/s, epoch=8, loss=2.7364, val acc=33.192, train acc=38.692, lr=0.01]                                                                                  
+100%|██████████| 95/95 [00:36<00:00,  2.61 batches/s, epoch=9, loss=2.5339, val acc=34.335, train acc=42.22, lr=0.01]                                                                                   
+100%|██████████| 95/95 [00:36<00:00,  2.62 batches/s, epoch=10, loss=2.3231, val acc=34.025, train acc=45.625, lr=0.01]  
 ```
 
      

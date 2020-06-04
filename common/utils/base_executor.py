@@ -1,4 +1,4 @@
-from AlexNet.properties import *
+import torch
 from common.utils.training_util import *
 from tqdm import tqdm
 from apex import amp
