@@ -178,7 +178,7 @@ improvement than the AlexNet implementation.
 | ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01             |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
-- 100 training epochs took 7    5 minutes to complete.     
+- 100 training epochs took 75 minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing
