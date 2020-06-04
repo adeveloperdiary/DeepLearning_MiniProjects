@@ -178,7 +178,7 @@ improvement than the AlexNet implementation.
 | ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01             |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
-- 100 training epochs took ~100 minutes to complete.     
+- 100 training epochs took 7    5 minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing
@@ -258,5 +258,8 @@ Training starting now ...
 <a id="https://arxiv.org/abs/1502.03167">[2]</a> Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
 
 <a id="http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf">[3]</a> Understanding the difficulty of training deep feedforward neural networks
+
+![[4] Visualizing and Understanding Convolutional Networks](https://arxiv.org/pdf/1311.2901.pdf)
+ 
 
 
