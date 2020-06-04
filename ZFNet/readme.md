@@ -95,11 +95,11 @@ To recap, following lists the changes between original AlexNet paper and my Alex
 
 Here are changes suggested in ZFNet:
 
-1. Update the size of the kernel of the 1st convolution layer from 11 to 7 and stride from 4 to 2. 
-2. Changed the stride from 1 to 2 and padding from 2 to 1 for the 2nd convolution layer.
-3. Update the channels of convolution layer 3,4,5 from 384, 384, 256 to 512, 1024, 512.
+1. Update the size of the kernel of the **1st convolution layer** from 11 to 7 and stride from 4 to 2. 
+2. Changed the stride from 1 to 2 and padding from 2 to 1 for the **2nd convolution layer**.
+3. Update the channels of convolution layer **3,4,5** from 384, 384, 256 to 512, 1024, 512.
     - Update the Batch Norm layers accordingly.
-4 The input dimension of the first Fully Connected layer will be changed to 6 * 6 * 512 from 6 * 6 * 256.
+4 The input dimension of the **first Fully Connected** layer will be changed to 6 * 6 * 512 from 6 * 6 * 256.
 
 ### Layers 
 None : In PyTorch input image of 224 x 224 can be used as PyTorch ignores the fraction.
