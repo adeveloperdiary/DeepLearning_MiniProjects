@@ -101,8 +101,8 @@ than imagenet. hence over fitting will be the major issue.
 | PReLU          | 224 x 224 x 64  |                 |                  |            |             |
 | BatchNorm2d    | 224 x 224 x 64  |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
-| MaxPool2d      | 112 x 112 x 64  | 2               |                  | 2          |             |
-| Dropout        | 112 x 112 x 64  |                 |                  |            |             |
+| **MaxPool2d**      | 112 x 112 x 64  | 2               |                  | 2          |             |
+| **Dropout**        | 112 x 112 x 64  |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
 | Conv2d         | 112 x 112 x 128 | 3               | 128              |            | 1           |
 | PReLU          | 112 x 112 x 128 |                 |                  |            |             |
@@ -112,8 +112,8 @@ than imagenet. hence over fitting will be the major issue.
 | PReLU          | 112 x 112 x 128 |                 |                  |            |             |
 | BatchNorm2d    | 112 x 112 x 128 |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
-| MaxPool2d      | 56 x 56 x 128   | 2               |                  | 2          |             |
-| Dropout        | 56 x 56 x 128   |                 |                  |            |             |
+| **MaxPool2d**      | 56 x 56 x 128   | 2               |                  | 2          |             |
+| **Dropout**        | 56 x 56 x 128   |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
 | Conv2d         | 56 x 56 x 256   | 3               | 256              |            | 1           |
 | PReLU          | 56 x 56 x 256   |                 |                  |            |             |
@@ -123,8 +123,8 @@ than imagenet. hence over fitting will be the major issue.
 | PReLU          | 56 x 56 x 256   |                 |                  |            |             |
 | BatchNorm2d    | 56 x 56 x 256   |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
-| MaxPool2d      | 28 x 28 x 256   | 2               |                  | 2          |             |
-| Dropout        | 28 x 28 x 256   |                 |                  |            |             |
+| **MaxPool2d**      | 28 x 28 x 256   | 2               |                  | 2          |             |
+| **Dropout**        | 28 x 28 x 256   |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
 | Conv2d         | 28 x 28 x 512   | 3               | 512              |            | 1           |
 | PReLU          | 28 x 28 x 512   |                 |                  |            |             |
@@ -134,8 +134,8 @@ than imagenet. hence over fitting will be the major issue.
 | PReLU          | 28 x 28 x 512   |                 |                  |            |             |
 | BatchNorm2d    | 28 x 28 x 512   |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
-| MaxPool2d      | 14 x 14 x 512   | 2               |                  | 2          |             |
-| Dropout        | 14 x 14 x 512   |                 |                  |            |             |
+| **MaxPool2d**      | 14 x 14 x 512   | 2               |                  | 2          |             |
+| **Dropout**        | 14 x 14 x 512   |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
 | Conv2d         | 14 x 14 x 512   | 3               | 512              |            | 1           |
 | PReLU          | 14 x 14 x 512   |                 |                  |            |             |
@@ -145,8 +145,8 @@ than imagenet. hence over fitting will be the major issue.
 | PReLU          | 14 x 14 x 512   |                 |                  |            |             |
 | BatchNorm2d    | 14 x 14 x 512   |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
-| MaxPool2d      | 7 x 7 x 512     | 2               |                  | 2          |             |
-| Dropout        | 7 x 7 x 512     |                 |                  |            |             |
+| **MaxPool2d**      | 7 x 7 x 512     | 2               |                  | 2          |             |
+| **Dropout**        | 7 x 7 x 512     |                 |                  |            |             |
 |                |                 |                 |                  |            |             |
 | Flatten\(\)    | 7 x 7 x 512     |                 |                  |            |             |
 | Linear         | 4096            |                 |                  |            |             |
