@@ -50,7 +50,7 @@ class Executor(BaseExecutor):
         # Here val accuracy has been used as the metric, hence set mode to 'max'
         # changed after 30 epochs ( patience=5->3, threshold=0.0001->0.001
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='max', factor=0.5, patience=3, verbose=False,
-                                                                    threshold=0.001)
+                                                                    threshold=0.01)
 
         # Define the Loss Function
         self.criterion = torch.nn.CrossEntropyLoss()
@@ -100,7 +100,7 @@ class Executor(BaseExecutor):
             eval_accuracy = self.post_training_loop_ops(epoch, train_accuracy)
 
             # Scheduler step() function
-            self.scheduler.step(eval_accuracy / 1000)
+            self.scheduler.step(eval_accuracy / 100)
             # self.scheduler.step(self.val_loss_hist.value)
 
             # Close the progress bar

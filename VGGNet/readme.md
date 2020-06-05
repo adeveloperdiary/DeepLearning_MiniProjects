@@ -61,7 +61,7 @@ http://www.adeveloperdiary.com/data-science/computer-vision/imagenet-preprocessi
 
 ### Data Augmentation
 There were only 2 types of data augmentation used. Following Data Augmentations are implemented using the 
-albumentations library in the `ZFNet.transformation.py` file.
+albumentations library in the `VGGNet.transformation.py` file.
 
 #### Training Data Augmentation    
 1. Random Crop of 224x224
@@ -139,12 +139,12 @@ more data augmentation will probably help.
 
 ![Training Plot](img/plot.png)
 
- 
+The is the plot of the learning rate decay.  
 
 ![Training Plot](img/lr.png)
 
 ### Comparison with AlexNet
-As shown below, the authors of VGG were able to achieve 53.45% Accuracy while training from scratch.
+As shown below, the implemented model was able to achieve 53.45% Accuracy while training from scratch.
 
 | **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
@@ -153,7 +153,7 @@ As shown below, the authors of VGG were able to achieve 53.45% Accuracy while tr
 | VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125          |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
-- 100 training epochs took 201.26 Minutes to complete.     
+- 70 training epochs took 201.26 Minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing
@@ -181,10 +181,10 @@ As shown below, the authors of VGG were able to achieve 53.45% Accuracy while tr
         ```
 ### Training & Testing
 - Run the following files:
-    - `ZFNet.train.py` 
-    - `ZFNet.test.py`
+    - `VGGNet.train.py` 
+    - `VGGNet.test.py`
         - The test.py will automatically pickup the last saved checkpoint by training
-- The properties can be changed at `ZFNet.properties.py`. Here is how the configurations are defined.
+- The properties can be changed at `VGGNet.properties.py`. Here is how the configurations are defined.
 ```python
 config = dict()
 config['PROJECT_NAME'] = 'vgg13'
