@@ -27,7 +27,7 @@ Network. There are many common factors that were taken care such as Mixed Precis
 - Find the details of the project here:
     - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/ZFNet 
     
-## 4. Implementation of VGG using PyTorch
+## 5. Implementation of VGG using PyTorch
 
 - This implementation is an almost exact replica of the VGG paper in PyTorch, however there are many
 common factors that were taken care.
