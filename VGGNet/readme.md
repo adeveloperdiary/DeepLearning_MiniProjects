@@ -24,7 +24,7 @@ The authors of the paper faced difficulties to train such a deep network, hence 
 **VGG11(A)** with 11 layers and initialized them using normal distribution. Once trained, they used the weights to initialize
 a bit larger network **VGG13(B)** with 13 layers. This way they were able to train a 19 layer network referred as **VGG19(E)**
 
-However later the authors tested Xavier initialization to directly train VGG19 and it was able to achieve same error rate 
+However later the authors tested **Xavier initialization** to directly train VGG19 and it was able to achieve same error rate 
 as the original model. Hence instead of training separate models, which is very time consuming, I will be training the VGG
 network using Xavier initialization.
 
@@ -144,7 +144,7 @@ more data augmentation will probably help.
 
 ![Training Plot](img/plot.png)
 
-Even though `ReduceLROnPlateau` scheduler was used to decay learning rate, it wasn't effective as the training error kept reducing. 
+ 
 
 ![Training Plot](img/lr.png)
 
