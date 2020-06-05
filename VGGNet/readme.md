@@ -144,19 +144,13 @@ more data augmentation will probably help.
 ![Training Plot](img/lr.png)
 
 ### Comparison with AlexNet
-As shown below, the authors of ZFNet were able to achieve 38.8% Accuracy while training from scratch. The implementation 
-here was able to achieve 49.67% on the validation set.   
-
-![Caltech256 Result from paper](img/result.png)
-
-ZFNet error rate (top-5) was 1.7% lower then AlexNet. Here we can see that this implementation has around 3% accuracy 
-improvement than the AlexNet implementation. 
+As shown below, the authors of VGG were able to achieve 53.45% Accuracy while training from scratch.
 
 | **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
 | AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01             |
 | ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01             |
-| VGG13            | 70         | 0\.0655           | 51\.45%                 | 99\.08%               | 0\.00125          |
+| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125          |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
 - 100 training epochs took 201.26 Minutes to complete.     
