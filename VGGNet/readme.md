@@ -96,8 +96,8 @@ than imagenet. hence over fitting will be the major issue.
 | Conv2d         | 224 x 224 x 64  | 3               | 64               |            | 1           |
 | ReLU           | 224 x 224 x 64  |                 |                  |            |             |
 | BatchNorm2d    | 224 x 224 x 64  |                 |                  |            |             |
+
 |----------------|-----------------|-----------------|------------------|------------|-------------|
-| Input Image    | 224 x 224 x 3   |                 |                  |            |             |
 | Conv2d         | 224 x 224 x 64  | 3               | 64               |            | 1           |
 | ReLU           | 224 x 224 x 64  |                 |                  |            |             |
 | BatchNorm2d    | 224 x 224 x 64  |                 |                  |            |             |
