@@ -48,7 +48,6 @@ class Executor(BaseExecutor):
         # for a ‘patience’ number of epochs, the learning rate is reduced.
         # https://pytorch.org/docs/stable/optim.html?highlight=reducelronplateau#torch.optim.lr_scheduler.ReduceLROnPlateau
         # Here val accuracy has been used as the metric, hence set mode to 'max'
-        # changed after 30 epochs ( patience=5->3, threshold=0.0001->0.001
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='max', factor=0.5, patience=3, verbose=False,
                                                                     threshold=0.01)
 
