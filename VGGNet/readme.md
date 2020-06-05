@@ -84,7 +84,7 @@ Here are some of the changed applied in this implementation.
 
 Here are layer design of the different architectures of various depth used by the authors. 
 
-[VGG Layers](img/vgg.png)
+![VGG Layers](img/vgg.png)
 
 ### Layers 
 Even though this implementation supports all architectures - A, B, D ,E, we will be using B here as we have much smaller dataset
