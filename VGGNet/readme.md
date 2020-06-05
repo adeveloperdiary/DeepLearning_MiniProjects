@@ -126,11 +126,6 @@ than imagenet. hence over fitting will be the major issue.
 | Linear         | 256             |                 |                  |            |             |
 | LogSoftmax     | 256             |                 |                  |            |             |
 
-### Architecture Diagram
-Here is the original architecture diagram from the paper.
-
-![Image of ZFNet](img/zfnet.png)
-
 ## Training
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
 - Initial **Learning Rate** has been set to `0.01` ( The authors used .001 as initial lr)
