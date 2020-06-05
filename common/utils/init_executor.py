@@ -69,9 +69,9 @@ class InitExecutor(object):
         """
 
         # If the last.checkpoint file exists in the input dir
-        if os.path.isfile(f'{self.INPUT_DIR}/last.checkpoint'):
+        if os.path.isfile(f'{self.INPUT_DIR}/last.checkpoint.{self.PROJECT_NAME}'):
             # Open the file and read the first line
-            with open(f'{self.INPUT_DIR}/last.checkpoint', 'r') as file:
+            with open(f'{self.INPUT_DIR}/last.checkpoint.{self.PROJECT_NAME}', 'r') as file:
                 lines = file.readlines()
                 self.last_checkpoint_file = lines[0].strip()
                 # If the file exists then load from last checkpoint

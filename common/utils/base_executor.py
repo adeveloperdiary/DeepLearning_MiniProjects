@@ -213,6 +213,9 @@ class BaseExecutor(InitExecutor):
             epoch=f"{epoch}, loss={round(self.train_loss_hist.value, 4)}, val acc={round(eval_accuracy, 3)}, train acc={round(train_accuracy, 3)}, lr={current_lr}",
             refresh=False)
 
+        self.logger.info(
+            f"epoch={epoch}, loss={round(self.train_loss_hist.value, 4)}, val acc={round(eval_accuracy, 3)}, train acc={round(train_accuracy, 3)}, lr={current_lr}")
+
         # Add to validation loss
         self.val_acc.append((round(eval_accuracy, 3), epoch))
         self.val_loss.append((round(self.val_loss_hist.value, 4), epoch))
@@ -221,6 +224,8 @@ class BaseExecutor(InitExecutor):
 
         # Save the model ( if needed )
         self.save_checkpoint(epoch)
+
+        return eval_accuracy
 
     def save_checkpoint(self, epoch):
         """
@@ -251,7 +256,7 @@ class BaseExecutor(InitExecutor):
 
             # Indicate the last checkpoint file to last.checkpoint
             # This will be used for next run to load from checkpoint automatically
-            with open(f'{self.INPUT_DIR}/last.checkpoint', 'w+') as file:
+            with open(f'{self.INPUT_DIR}/last.checkpoint.{self.PROJECT_NAME}', 'w+') as file:
                 file.writelines('\n'.join([file_name, self.tb_writer.get_logdir()]))
 
             # Write to tensor board
