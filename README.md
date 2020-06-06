@@ -2,7 +2,6 @@
 
 ## Image Classification
 [[1] Implementation of AlexNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet)
-
 [[2] Implementation of ZFNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/ZFNet)
 
 [[3] Implementation of VGG using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/VGGNet)
