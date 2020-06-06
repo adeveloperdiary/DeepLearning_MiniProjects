@@ -1,41 +1,11 @@
 # List of Deep Learning related mini projects:
-## 1. Generate python source using RNN:
 
-- Trained a stacked LSTM Char sequence model on open source python code to generate source data. 
-- The result is remarkable just after 50 epochs.
-- Find the details of the project here: 
-    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/Char_Sequence_with_RNN 
-    
-## 2. Sentiment Analysis using RNN:
+## Image Classification:
+[[1] Implementation of AlexNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet)
+[[2] Implementation of ZFNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/ZFNet)
+[[3] Implementation of VGG using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/VGGNet)
+[[4] Implementation of GoogLeNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/GoogLeNet)
 
-- Sentiment analysis is typically a classification problem.
-- However for a larger data set RNN can provide a better prediction than typical Machine Learning approach.  
-- Find the details of the project here: 
-    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/Sentiment_Analysis_using_RNN 
-
-## 3. Implementation of AlexNet using PyTorch
-
-- This implementation is an almost exact replica of the AlexNet paper in PyTorch, 
-  however there are many common factors that were taken care such as Mixed Precision, Tensor Board integration etc
-- Find the details of the project here:
-    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet 
-    
-## 4. Implementation of ZFNet using PyTorch
-
-- ZFNet is a predecessor of AlexNet Paper as it recommended fine tuning AlexNet by visualizing the Convolution
-Network. There are many common factors that were taken care such as Mixed Precision, Tensor Board integration etc
-- Find the details of the project here:
-    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/ZFNet 
-    
-## 5. Implementation of VGG using PyTorch
-
-- This implementation is an almost exact replica of the VGG paper in PyTorch, however there are many
-common factors that were taken care.
-- Find the details of the project here:
-    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/VGGNet
-    
-## 6. Implementation of GoogLeNet using PyTorch
-
-- This is the implementation of GoogLenet paper in PyTorch, however there are many other common factors that were taken care.
-- Find the details of the project here:
-    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/GoogLeNet
+## RNN:
+[[1] Sentiment Analysis using RNN ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/Sentiment_Analysis_using_RNN )
+[[2] Generate python source using RNN ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/Char_Sequence_with_RNN)
