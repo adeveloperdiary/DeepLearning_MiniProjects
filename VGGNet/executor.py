@@ -7,7 +7,7 @@ import timeit
 from common.utils.base_executor import *
 
 """
-    The Executor class is responsible for the training and testing of the ZFNet paper. It takes the data loaders and
+    The Executor class is responsible for the training and testing of the VGG paper. It takes the data loaders and
     configuration (properties.py) as the input. This extends the parents class BaseExecutor, which 
     contains many boilerplate reusable methods.  
     

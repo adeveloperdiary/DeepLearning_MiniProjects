@@ -29,7 +29,7 @@ as the original model. Hence instead of training separate models, which is very 
 network using Xavier initialization.
 
 ## Dataset
-The VGG paper used ImageNet dataset , I will be another dataset named **Caltech256** which is very similar to Imagenet but 
+The VGG paper used ImageNet dataset , however this implementation used another dataset named **Caltech256**, which is very similar to Imagenet but 
 consists of only 256 Categories and around 30K images. Any decent GPU should be able to train using this  dataset in much 
 lesser time than ImageNet. 
 
