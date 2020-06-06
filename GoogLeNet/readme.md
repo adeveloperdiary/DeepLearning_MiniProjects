@@ -131,7 +131,7 @@ The is the plot of the learning rate decay.
 ![Training Plot](img/lr.png)
 
 ### Comparison with other architecture
-As shown below, the implemented model was able to achieve 53.45% Accuracy while training from scratch.
+As shown below, the implemented model was able to achieve 55.17% Accuracy while training from scratch.
 
 | **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
@@ -158,7 +158,7 @@ the learning rate was between 1e-04 - 1e-07.
 ![Training Plot](img/lr_a.png)
 
 ### Comparison with other architecture
-As shown below, the implemented model was able to achieve 53.45% Accuracy while training from scratch.
+As shown below, the implemented model was able to achieve 61.51% Accuracy while training from scratch.
 
 | **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate**       |
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------------:|
