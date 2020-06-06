@@ -1,6 +1,5 @@
-# Implementation of GoogLenet using PyTorch
-This implementation is an almost exact replica of the GoogLenet paper in PyTorch, however there are many
-common factors that were taken care such as:
+# Implementation of GoogLeNet using PyTorch
+This is the implementation of GoogLenet paper in PyTorch, however there are many other common factors that were taken care such as:
 
 1.  Data Augmentation is outside of main class and can be defined in a 
     semi declarative way using albumentations library inside the transformation.py class.
@@ -18,18 +17,11 @@ common factors that were taken care such as:
             once PyTorch 1.6 has been released.
 7.  The network layers sizes can be printed to console for verification.  
 
-There are few differences between this implementation and original GoogLenet paper mostly due to obsolete/outdated concepts.
-
-The authors of the paper faced difficulties to train such a deep network, hence they initially created a smaller network
-**GoogLenet11(A)** with 11 layers and initialized them using normal distribution. Once trained, they used the weights to initialize
-a bit larger network **GoogLenet13(B)** with 13 layers. This way they were able to train a 19 layer network referred as **GoogLenet19(E)**
-
-However later the authors tested **Xavier initialization** to directly train GoogLenet19 and it was able to achieve same error rate 
-as the original model. Hence instead of training separate models, which is very time consuming, I will be training the GoogLenet
-network using Xavier initialization.
+There are few differences between this implementation and original GoogLeNet paper, which have been highlighted in relevant 
+section below. 
 
 ## Dataset
-The GoogLenet paper used ImageNet dataset , I will be another dataset named **Caltech256** which is very similar to Imagenet but 
+The GoogLeNet paper used ImageNet dataset , however this implementation used another dataset named **Caltech256** which is very similar to Imagenet but 
 consists of only 256 Categories and around 30K images. Any decent GPU should be able to train using this  dataset in much 
 lesser time than ImageNet. 
 
@@ -42,7 +34,7 @@ Below is the URL of the Caltech256 Dataset.
 [Download Caltech 256 Dataset](/http://www.vision.caltech.edu/Image_Datasets/Caltech256/#Details)
 
 ### Pre-Processing
-The pre-processing steps are same as AlexNet. As GoogLenet hasn't recommended any additional improvements. 
+The pre-processing steps are similar to AlexNet. As GoogLeNet hasn't recommended any additional improvements. 
 
 1. Create Train/Validation Dataset ( Test labels are not given )
 2. Center crop images 
@@ -60,13 +52,15 @@ None: In case of ImageNet, parallel processing is recommended. Please refer the 
 http://www.adeveloperdiary.com/data-science/computer-vision/imagenet-preprocessing-using-tfrecord-and-tensorflow-2-0-data-api/
 
 ### Data Augmentation
-There were only 2 types of data augmentation used. Following Data Augmentations are implemented using the 
-albumentations library in the `GoogLenetNet.transformation.py` file.
+There were only few types of data augmentation used. Following Data Augmentations are implemented using the 
+albumentations library in the `GoogLeNetNet.transformation.py` file.
 
 #### Training Data Augmentation    
 1. Random Crop of 224x224
     - Original paper used center crop, I will be using Random Crop here.
-2. Mean RGB Normalization ( Like AlexNet, ZFNet )     
+2. Mean RGB Normalization ( Like AlexNet, ZFNet ) 
+3. Horizontal Flip
+4. Random 90 Degree Rotation    
     
 #### Testing Data Augmentation
 1. Random Crop of 224x224 ( Same as training )
@@ -75,95 +69,49 @@ albumentations library in the `GoogLenetNet.transformation.py` file.
 ## CNN Architecture
 
 Here are some of the changed applied in this implementation.
+1.  Use Xavier Normal initialization instead of initializing just from a normal distribution.
+2.  The auxiliary outputs are not implemented.
 
-1. Use of **Batch Normalization** after the activation.
-3. Use more Dropout layers ( after MaxPool layers ) to reduce over-fitting.
-4. Use **Xavier Normal** initialization instead of initializing just from a normal distribution.
-5. Use PReLU instead of ReLU. PReLU is similar to LeakyReLU, but instead of a fixed predetermined slope like 0.01
-   it lets the network learn the best slope.
+Here are the layers defined by the authors.
+ 
+![GoogLeNet Layers](img/layers.png)
 
-Here are layer design of the different architectures of various depth used by the authors. 
+Below is the diagram of the inception module. There are total 9 inception module used in the design.
 
-![GoogLenet Layers](img/GoogLenet.png)
+![GoogLeNet Layers](img/inception.png)
 
 ### Layers 
-Even though this implementation supports all architectures - A, B, D ,E, we will be using B here as we have much smaller dataset
-than imagenet. hence over fitting will be the major issue.    
 
-| **Layer Type** | **Output Size** | **Kernel Size** | **# of Kernels** | **Stride** | **Padding** |
-|----------------|-----------------|-----------------|------------------|------------|-------------|
-| Input Image    | 224 x 224 x 3   |                 |                  |            |             |
-| Conv2d         | 224 x 224 x 64  | 3               | 64               |            | 1           |
-| PReLU          | 224 x 224 x 64  |                 |                  |            |             |
-| BatchNorm2d    | 224 x 224 x 64  |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 224 x 224 x 64  | 3               | 64               |            | 1           |
-| PReLU          | 224 x 224 x 64  |                 |                  |            |             |
-| BatchNorm2d    | 224 x 224 x 64  |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| **MaxPool2d**      | 112 x 112 x 64  | 2               |                  | 2          |             |
-| **Dropout**        | 112 x 112 x 64  |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 112 x 112 x 128 | 3               | 128              |            | 1           |
-| PReLU          | 112 x 112 x 128 |                 |                  |            |             |
-| BatchNorm2d    | 112 x 112 x 128 |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 112 x 112 x 128 | 3               | 128              |            | 1           |
-| PReLU          | 112 x 112 x 128 |                 |                  |            |             |
-| BatchNorm2d    | 112 x 112 x 128 |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| **MaxPool2d**      | 56 x 56 x 128   | 2               |                  | 2          |             |
-| **Dropout**        | 56 x 56 x 128   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 56 x 56 x 256   | 3               | 256              |            | 1           |
-| PReLU          | 56 x 56 x 256   |                 |                  |            |             |
-| BatchNorm2d    | 56 x 56 x 256   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 56 x 56 x 256   | 3               | 256              |            | 1           |
-| PReLU          | 56 x 56 x 256   |                 |                  |            |             |
-| BatchNorm2d    | 56 x 56 x 256   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| **MaxPool2d**      | 28 x 28 x 256   | 2               |                  | 2          |             |
-| **Dropout**        | 28 x 28 x 256   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 28 x 28 x 512   | 3               | 512              |            | 1           |
-| PReLU          | 28 x 28 x 512   |                 |                  |            |             |
-| BatchNorm2d    | 28 x 28 x 512   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 28 x 28 x 512   | 3               | 512              |            | 1           |
-| PReLU          | 28 x 28 x 512   |                 |                  |            |             |
-| BatchNorm2d    | 28 x 28 x 512   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| **MaxPool2d**      | 14 x 14 x 512   | 2               |                  | 2          |             |
-| **Dropout**        | 14 x 14 x 512   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 14 x 14 x 512   | 3               | 512              |            | 1           |
-| PReLU          | 14 x 14 x 512   |                 |                  |            |             |
-| BatchNorm2d    | 14 x 14 x 512   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Conv2d         | 14 x 14 x 512   | 3               | 512              |            | 1           |
-| PReLU          | 14 x 14 x 512   |                 |                  |            |             |
-| BatchNorm2d    | 14 x 14 x 512   |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| **MaxPool2d**      | 7 x 7 x 512     | 2               |                  | 2          |             |
-| **Dropout**        | 7 x 7 x 512     |                 |                  |            |             |
-|                |                 |                 |                  |            |             |
-| Flatten\(\)    | 7 x 7 x 512     |                 |                  |            |             |
-| Linear         | 4096            |                 |                  |            |             |
-| ReLU           | 4096            |                 |                  |            |             |
-| BatchNorm2d    | 4096            |                 |                  |            |             |
-| Dropout        | 4096            |                 |                  |            |             |
-| Linear         | 4096            |                 |                  |            |             |
-| ReLU           | 4096            |                 |                  |            |             |
-| BatchNorm2d    | 4096            |                 |                  |            |             |
-| Dropout        | 4096            |                 |                  |            |             |
-| Linear         | 256             |                 |                  |            |             |
-| LogSoftmax     | 256             |                 |                  |            |             |
+| **Layer Type**           | **Output Size**     | **Kernel Size**     | **\# of Kernels**     | **Stride**     | **Padding**     |
+|--------------------------|---------------------|---------------------|-----------------------|----------------|-----------------|
+| Input Image              | 224 x 224 x 3       |                     |                       |                |                 |
+| DefaultConvolutionModule | 112 x 112 x 64      | 7                   | 64                    | 2              | 3               |
+| MaxPool2d                | 56 x 56 x 64        | 3                   |                       | 2              | 1               |
+| DefaultConvolutionModule | 56 x 56 x 64        | 1                   | 64                    |                |                 |
+| DefaultConvolutionModule | 56 x 56 x 192       | 3                   | 192                   |                |                 |
+| MaxPool2d                | 28 x 28 x 192       | 3                   |                       | 2              | 1               |
+| **InceptionModule**          | 28 x 28 x 256       |                     |                       |                |                 |
+| **InceptionModule**          | 28 x 28 x 480       |                     |                       |                |                 |
+| MaxPool2d                | 14 x 14 x 480       | 3                   |                       | 2              | 1               |
+| **InceptionModule**          | 14 x 14 x 512       |                     |                       |                |                 |
+| **InceptionModule**          | 14 x 14 x 512       |                     |                       |                |                 |
+| **InceptionModule**          | 14 x 14 x 512       |                     |                       |                |                 |
+| **InceptionModule**          | 14 x 14 x 528       |                     |                       |                |                 |
+| **InceptionModule**          | 14 x 14 x 832       |                     |                       |                |                 |
+| MaxPool2d                | 7 x 7 x 832         | 3                   |                       | 2              | 1               |
+| **InceptionModule**          | 7 x 7 x 832         |                     |                       |                |                 |
+| **InceptionModule**          | 7 x 7 x 1024        |                     |                       |                |                 |
+| AdaptiveAvgPool2d        | 1 x 1 x 1024        |                     |                       |                |                 |
+| Dropout                  | 1 x 1 x 1024        |                     |                       |                |                 |
+| Flatten                  | 1 x 1024            |                     |                       |                |                 |
+| Linear                   | 1 x 256             |                     |                       |                |                 |
+| LogSoftmax               | 1 x 256             |                     |                       |                |                 |
+
 
 ## Training
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
 - Initial **Learning Rate** has been set to `0.01` ( The authors used .001 as initial lr)
-- In GoogLenet the learning rate was reduced manually 3 times, by a factor of 10.
+- In GoogLeNet the learning rate was reduced manually 3 times, by a factor of 10.
   However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 3 epochs
 - ReduceLROnPlateau is dependent on the validation set accuracy.  
 
@@ -184,7 +132,7 @@ As shown below, the implemented model was able to achieve 53.45% Accuracy while 
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
 | AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01             |
 | ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01             |
-| GoogLenet13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125          |
+| GoogLeNet13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125          |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
 - 70 training epochs took 201.26 Minutes to complete.     
@@ -215,13 +163,14 @@ As shown below, the implemented model was able to achieve 53.45% Accuracy while 
         ```
 ### Training & Testing
 - Run the following files:
-    - `GoogLenetNet.train.py` 
-    - `GoogLenetNet.test.py`
+    - `GoogLeNet.train.py` 
+    - `GoogLeNet.test.py`
         - The test.py will automatically pickup the last saved checkpoint by training
-- The properties can be changed at `GoogLenetNet.properties.py`. Here is how the configurations are defined.
+- The properties can be changed at `GoogLeNet.properties.py`. Here is how the configurations are defined.
+
 ```python
 config = dict()
-config['PROJECT_NAME'] = 'GoogLenet13'
+config['PROJECT_NAME'] = 'googlenet'
 config['INPUT_DIR'] = '/media/4TB/datasets/caltech/processed'
 
 config['TRAIN_DIR'] = f"{config['INPUT_DIR']}/train"
@@ -245,24 +194,23 @@ config["LOGLEVEL"] = "INFO"
 I am executing the script remotely from pycharm. Here is a sample output of the train.py
 
 ```
-sudo+ssh://home@192.168.50.106:22/home/home/.virtualenvs/dl4cv/bin/python3 -u /home/home/Documents/synch/mini_projects/GoogLenetNet/train.py
+sudo+ssh://home@192.168.50.106:22/home/home/.virtualenvs/dl4cv/bin/python3 -u /home/home/Documents/synch/mini_projects/GoogLeNet/train.py
 Building model ...
 Training starting now ...
-100%|██████████| 765/765 [02:50<00:00,  4.49 batches/s, epoch=1, loss=5.2405, val acc=9.115, train acc=6.577, lr=0.01]                                                                                  
-100%|██████████| 765/765 [02:51<00:00,  4.46 batches/s, epoch=2, loss=4.8757, val acc=11.908, train acc=9.551, lr=0.01]                                                                                 
-100%|██████████| 765/765 [02:52<00:00,  4.45 batches/s, epoch=3, loss=4.6051, val acc=17.184, train acc=12.484, lr=0.01]                                                                                
-100%|██████████| 765/765 [02:52<00:00,  4.45 batches/s, epoch=4, loss=4.3295, val acc=20.255, train acc=15.629, lr=0.01]                                                                                
-100%|██████████| 765/765 [02:52<00:00,  4.44 batches/s, epoch=5, loss=4.044, val acc=22.264, train acc=19.248, lr=0.01]                                                                                 
-100%|██████████| 765/765 [02:52<00:00,  4.44 batches/s, epoch=6, loss=3.7676, val acc=25.515, train acc=23.182, lr=0.01]                                                                                
-100%|██████████| 765/765 [02:52<00:00,  4.44 batches/s, epoch=7, loss=3.4886, val acc=27.899, train acc=26.924, lr=0.01]                                                                                
-100%|██████████| 765/765 [02:52<00:00,  4.43 batches/s, epoch=8, loss=3.231, val acc=29.86, train acc=31.148, lr=0.01]                                                                                  
-100%|██████████| 765/765 [02:52<00:00,  4.43 batches/s, epoch=9, loss=2.9859, val acc=33.992, train acc=35.061, lr=0.01]
-100%|██████████| 765/765 [02:53<00:00,  4.41 batches/s, epoch=10, loss=2.7667, val acc=34.27, train acc=38.468, lr=0.01]                                                                                
+100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=1, loss=4.9997, val acc=9.67, train acc=8.201, lr=0.001]                                                                                  
+100%|██████████| 191/191 [00:52<00:00,  3.61 batches/s, epoch=2, loss=4.499, val acc=13.639, train acc=12.128, lr=0.0009046039886902864]                                                                
+100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=3, loss=4.1048, val acc=16.923, train acc=16.091, lr=0.0006548539886902863]                                                               
+100%|██████████| 191/191 [00:53<00:00,  3.60 batches/s, epoch=4, loss=3.7222, val acc=21.251, train acc=20.967, lr=0.0003461460113097138]                                                               
+100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=5, loss=3.4461, val acc=25.368, train acc=25.36, lr=9.639601130971379e-05]                                                                
+100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=6, loss=3.3391, val acc=26.527, train acc=27.127, lr=1e-06]                                                                                                                                              
+100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=8, loss=3.4304, val acc=24.567, train acc=25.356, lr=0.000346146011309714]                                                                
+100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=9, loss=3.4815, val acc=21.66, train acc=24.452, lr=0.0006548539886902867]
+100%|██████████| 191/191 [00:53<00:00,  3.56 batches/s, epoch=10, loss=3.4207, val acc=25.025, train acc=25.094, lr=0.000904603988690287]
 ```
 
      
 ## References
-[[1] VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE IMAGE RECOGNITION](https://arxiv.org/pdf/1409.1556.pdf)
+[[1] Going deeper with convolutions ](https://arxiv.org/pdf/1409.4842.pdf)
 
 [[2] ImageNet Classification with Deep Convolutional Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
 
