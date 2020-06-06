@@ -111,7 +111,7 @@ Below is the diagram of the inception module. There are total 9 inception module
 ## Training
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
     - Also used **Adam** as alternative approach with initial learning rate as 0.001. 
-- Initial **Learning Rate** for SGD has been set to `0.01` ( The authors used .0001 as initial lr)
+- Initial **Learning Rate** for SGD has been set to `0.01` ( The authors used 0.001 as initial lr)
 - In GoogLeNet the learning rate was reduced manually, however we will be using Learning Rate Scheduler.
   However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 3 epochs
     - ReduceLROnPlateau is dependent on the validation set accuracy.  
