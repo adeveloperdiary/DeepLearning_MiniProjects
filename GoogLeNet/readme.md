@@ -110,14 +110,19 @@ Below is the diagram of the inception module. There are total 9 inception module
 
 ## Training
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
+    - Also used **Adam** as alternative approach with initial learning rate as 0.001. 
 - Initial **Learning Rate** has been set to `0.01` ( The authors used .001 as initial lr)
-- In GoogLeNet the learning rate was reduced manually 3 times, by a factor of 10.
+- In GoogLeNet the learning rate was reduced manually, however we will be using Learning Rate Scheduler.
   However here we will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 3 epochs
-- ReduceLROnPlateau is dependent on the validation set accuracy.  
+    - ReduceLROnPlateau is dependent on the validation set accuracy.  
+- Also, used **CosineAnnealingLR** instead of **ReduceLROnPlateau** with **Adam**
 
 ## Results
-Here is the plot of Training/Validation Loss/Accuracy after 70 Epochs on B Architecture. The model is clearly over-fitting, 
-more data augmentation will probably help. 
+
+### Approach 1:
+Used **Stochastic Gradient Descent** with **Nesterov's momentum** and **ReduceLROnPlateau** Learning rate scheduler.
+
+Here is the plot of Training/Validation Loss/Accuracy after 70 Epochs. The model is clearly over-fitting, more data augmentation will probably help. 
 
 ![Training Plot](img/plot.png)
 
@@ -125,17 +130,46 @@ The is the plot of the learning rate decay.
 
 ![Training Plot](img/lr.png)
 
-### Comparison with AlexNet
+### Comparison with other architecture
 As shown below, the implemented model was able to achieve 53.45% Accuracy while training from scratch.
 
 | **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
 | AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01             |
 | ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01             |
-| GoogLeNet13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125          |
+| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125          |
+| GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               | 1\.953125e-05     |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
-- 70 training epochs took 201.26 Minutes to complete.     
+- 70 training epochs took 59.7 Minutes to complete.     
+
+### Approach 2:
+Used **Adam** optimizer fd  f gvxzand **CosineAnnealingLR** Learning rate scheduler. This approach produces better validation
+set accuracy than previous one.
+
+Here is the plot of Training/Validation Loss/Accuracy after 90 Epochs. The model is clearly over-fitting, more data augmentation will probably help. 
+
+
+![Training Plot](img/plot_a.png)
+
+The is the plot of the learning rate decay. For first 70 epochs the leaning rate was set between 1e-03 - 1e-05 and from 70-90 
+the learning rate was between 1e-04 - 1e-07.
+
+![Training Plot](img/lr_a.png)
+
+### Comparison with other architecture
+As shown below, the implemented model was able to achieve 53.45% Accuracy while training from scratch.
+
+| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate**       |
+|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------------:|
+| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01                   |
+| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01                   |
+| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125                |
+| GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               | 1\.953125e-05           |
+| GoogLeNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               | 9\.63960113097139e-06   |
+
+- The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
+- 90 training epochs took 84.7 Minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing
@@ -208,7 +242,6 @@ Training starting now ...
 100%|██████████| 191/191 [00:53<00:00,  3.56 batches/s, epoch=10, loss=3.4207, val acc=25.025, train acc=25.094, lr=0.000904603988690287]
 ```
 
-     
 ## References
 [[1] Going deeper with convolutions ](https://arxiv.org/pdf/1409.4842.pdf)
 
