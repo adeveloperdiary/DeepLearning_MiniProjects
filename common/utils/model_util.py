@@ -34,3 +34,12 @@ class CNNBaseModel(torch.nn.Module):
             elif isinstance(m, torch.nn.Linear):
                 torch.nn.init.normal_(m.weight, 0, 0.01)
                 torch.nn.init.constant_(m.bias, 0)
+
+    def print_network(self):
+        """
+            Use this function to print the network sizes.
+        """
+        X = torch.rand(1, 3, 224, 224)
+        for layer in self.model:
+            X = layer(X)
+            print(layer.__class__.__name__, 'Output shape:\t', X.shape)
