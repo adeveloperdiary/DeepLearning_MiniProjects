@@ -144,7 +144,7 @@ As shown below, the implemented model was able to achieve 55.17% Accuracy while 
 - 70 training epochs took 59.7 Minutes to complete.     
 
 ### Approach 2:
-Used **Adam** optimizer fd  f gvxzand **CosineAnnealingLR** Learning rate scheduler. This approach produces better validation
+Used **Adam** optimizer with **CosineAnnealingLR** Learning rate scheduler. This approach produces better validation
 set accuracy than previous one.
 
 Here is the plot of Training/Validation Loss/Accuracy after 90 Epochs. The model is clearly over-fitting, more data augmentation will probably help. 
