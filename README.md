@@ -33,3 +33,9 @@ Network. There are many common factors that were taken care such as Mixed Precis
 common factors that were taken care.
 - Find the details of the project here:
     - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/VGGNet
+    
+## 6. Implementation of GoogLeNet using PyTorch
+
+- This is the implementation of GoogLenet paper in PyTorch, however there are many other common factors that were taken care.
+- Find the details of the project here:
+    - https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/GoogLeNet
