@@ -131,6 +131,7 @@ So combining all the Convolution/FC Layers we get ResNet 26.
 
 1 + 2\*3 + 2\*3 + 2\*3 + 2\*3 + 1  = 26 
 
+### Training Parameters
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum**      
 - Initial **Learning Rate** for SGD has been set to `0.01` ( The authors used 0.001 as initial lr)
 - In ResNet the learning rate was reduced manually, however we will be using Learning Rate Scheduler.
@@ -161,6 +162,7 @@ So combining all the Convolution/FC Layers we get ResNet 26.
 
 1 + 1\*3 + 2\*3 + 2\*3 + 1\*3 + 1  = 20
 
+### Training Parameters
 - Used **Adam** with **CosineAnnealingLR** learning rate scheduler.      
 - Initial **Learning Rate** for Adam has been set to `0.001`
 - The initial hyper-parameters of CosineAnnealingLR are set as following:
