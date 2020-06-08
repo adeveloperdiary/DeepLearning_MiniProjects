@@ -34,7 +34,7 @@ Below is the URL of the Caltech256 Dataset.
 The pre-processing steps are similar to AlexNet. As ResNet hasn't recommended any additional improvements. 
 
 1. Create Train/Validation Dataset ( Test labels are not given )
-2. Center crop images 
+2. Resize the smaller side of the image to 256. 
 3. Resize image to 256x256 Pixels
 4. Calculate RGB Mean ( only on train set ) and finally save the global mean to a file named `rgb_val.json`.
     - The RGB mean values is used during training to normalize each images in `ClassificationDataset` class.
