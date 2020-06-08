@@ -180,7 +180,7 @@ The is the plot of the learning rate decay.
 
 ![Training Plot](img/lr_2.png)
 
-## Comparison with other architecture
+## Comparison with other architectures implemented
 As shown below, the implemented model was able to achieve ~53% Accuracy while training from scratch. Also the accuracy flattens 
 from epoch 80 and reducing the learning rate further didnt help to gain validation accuracy.
 
