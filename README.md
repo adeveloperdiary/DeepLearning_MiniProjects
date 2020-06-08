@@ -9,6 +9,9 @@
 
 [[4] Implementation of GoogLeNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/GoogLeNet)
 
+[[4] Implementation of ResNet with Identity Mappings using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/ResNet)
+
+
 ## RNN
 [[1] Sentiment Analysis using RNN ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/Sentiment_Analysis_using_RNN )
 
