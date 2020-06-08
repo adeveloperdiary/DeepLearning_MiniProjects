@@ -116,8 +116,10 @@ Below is the graph showing the two different types of Identity Mapping used in R
 
 ![Identity Mappings](img/identity_mapping.png) 
 
-## Training
-In order to save time on training, a smaller variant of ResNet, with 26 Convolution/FC layer has been used.
+## Training & Result
+
+### Experiment 1
+Trained a smaller variant of ResNet, with 26 Convolution/FC layer has been used.
 The config of the layers looks like below, where the first value of each tuple indicates the output filter/kernel size and
 the 2nd value is the number of time that specific resnet module needs to be replicated.
 
@@ -135,7 +137,8 @@ So combining all the Convolution/FC Layers we get ResNet 26.
   We will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 3 epochs
     - ReduceLROnPlateau is dependent on the validation set accuracy.  
 
-## Results
+### Result
+
 Here is the plot of Training/Validation Loss/Accuracy after 120 Epochs. We can get more accuracy by using a larger model or
 more advanced optimization technique. 
 
@@ -145,21 +148,52 @@ The is the plot of the learning rate decay.
 
 ![Training Plot](img/lr.png)
 
-### Comparison with other architecture
+### Experiment 2
+Trained another smaller variant of ResNet, with 20 Convolution/FC layer has been used.
+The config of the layers looks like below, where the first value of each tuple indicates the output filter/kernel size and
+the 2nd value is the number of time that specific resnet module needs to be replicated.
+
+```python
+[(128, 1), (256, 2), (512, 2), (1024, 1)]
+```  
+
+So combining all the Convolution/FC Layers we get ResNet 26.
+
+1 + 1\*3 + 2\*3 + 2\*3 + 1\*3 + 1  = 20
+
+- Used **Adam** with **CosineAnnealingLR** learning rate scheduler.      
+- Initial **Learning Rate** for Adam has been set to `0.001`
+- The initial hyper-parameters of CosineAnnealingLR are set as following:
+    - T_max   : 5
+    - eta_min : 1e-5 
+- After 50 epochs the **eta_min** hyper-parameter of CosineAnnealingLR was changed to 1e-7.
+
+### Result
+Here is the plot of Training/Validation Loss/Accuracy after 80 Epochs. We can get more accuracy by using a larger model or
+more advanced optimization technique. 
+
+![Training Plot](img/plot_2.png)
+
+The is the plot of the learning rate decay.  
+
+![Training Plot](img/lr_2.png)
+
+## Comparison with other architecture
 As shown below, the implemented model was able to achieve ~53% Accuracy while training from scratch. Also the accuracy flattens 
 from epoch 80 and reducing the learning rate further didnt help to gain validation accuracy.
 
-| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate**       |
-|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------------:|
-| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01                   |
-| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01                   |
-| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125                |
-| GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               | 1\.953125e-05           |
-| GoogLeNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               | 9\.63960113097139e-06   |
-| Resnet26         | 80         | 0\.8853           | 53\.28%                 | 80\.86%               | 0\.00125   |
+| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** |
+|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|
+| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               |
+| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               |
+| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               |
+| GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               |
+| GoogLeNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               |
+| Resnet26         | 80         | 0\.8853           | 53\.28%                 | 80\.86%               |
+| Resnet20         | 80         | 0\.3557           | 59\.32%                 | 93\.54%               |
 
 - The network was trained using 2 x NVIDIA 2080ti and 32Bit Floating Point.
-- 80 training epochs took ~30 Minutes to complete.     
+- 80 training epochs took ~35-45 Minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing

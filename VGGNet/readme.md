@@ -180,11 +180,11 @@ The is the plot of the learning rate decay.
 ### Comparison with AlexNet
 As shown below, the implemented model was able to achieve 53.45% Accuracy while training from scratch.
 
-| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
-|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
-| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01             |
-| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01             |
-| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125          |
+| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** |
+|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|
+| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               |
+| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               |
+| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
 - 70 training epochs took 201.26 Minutes to complete.     

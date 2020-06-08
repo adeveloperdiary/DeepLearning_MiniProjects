@@ -160,13 +160,13 @@ the learning rate was between 1e-04 - 1e-07.
 ### Comparison with other architecture
 As shown below, the implemented model was able to achieve 61.51% Accuracy while training from scratch.
 
-| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate**       |
-|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------------:|
-| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01                   |
-| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01                   |
-| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125                |
-| GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               | 1\.953125e-05           |
-| GoogLeNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               | 9\.63960113097139e-06   |
+| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** |
+|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|
+| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               |
+| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               |
+| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               |
+| GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               |
+| GoogLeNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               |
 
 - The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
 - 90 training epochs took 84.7 Minutes to complete.     
