@@ -82,6 +82,8 @@ Here for the Caltech256 dataset used 29 layers of network with the following set
 
 ### Layers 
 
+Here is the layer structure of ResNet 50 architecture. 
+
 | **Layer Type**           | **Output Size**     | **Kernel Size**     | **\# of Kernels**     | **Stride**     | **Padding**     |
 |--------------------------|---------------------|---------------------|-----------------------|----------------|-----------------|
 | Input Image              | 224 x 224 x 3       |                     |                       |                |                 |
@@ -140,43 +142,16 @@ The is the plot of the learning rate decay.
 ### Comparison with other architecture
 As shown below, the implemented model was able to achieve 55.17% Accuracy while training from scratch.
 
-| **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate** |
-|:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------:|
-| AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01             |
-| ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01             |
-| VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125          |
-| ResNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               | 1\.953125e-05     |
-
-- The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
-- 70 training epochs took 59.7 Minutes to complete.     
-
-### Approach 2:
-Used **Adam** optimizer with **CosineAnnealingLR** Learning rate scheduler. This approach produces better validation
-set accuracy than previous one.
-
-Here is the plot of Training/Validation Loss/Accuracy after 90 Epochs. The model is clearly over-fitting, more data augmentation will probably help. 
-
-
-![Training Plot](img/plot_a.png)
-
-The is the plot of the learning rate decay. For first 70 epochs the leaning rate was set between 1e-03 - 1e-05 and from 70-90 
-the learning rate was between 1e-04 - 1e-07.
-
-![Training Plot](img/lr_a.png)
-
-### Comparison with other architecture
-As shown below, the implemented model was able to achieve 61.51% Accuracy while training from scratch.
-
 | **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate**       |
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------------:|
 | AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               | 0\.01                   |
 | ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               | 0\.01                   |
 | VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125                |
-| ResNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               | 1\.953125e-05           |
-| ResNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               | 9\.63960113097139e-06   |
+| GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               | 1\.953125e-05           |
+| GoogLeNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               | 9\.63960113097139e-06   |
 
-- The network was trained using single NVIDIA 2080ti and 32Bit Floating Point.
-- 90 training epochs took 84.7 Minutes to complete.     
+- The network was trained using 2 x NVIDIA 2080ti and 32Bit Floating Point.
+- 70 training epochs took 59.7 Minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing
@@ -211,7 +186,7 @@ As shown below, the implemented model was able to achieve 61.51% Accuracy while 
 
 ```python
 config = dict()
-config['PROJECT_NAME'] = 'ResNet'
+config['PROJECT_NAME'] = 'resnet'
 config['INPUT_DIR'] = '/media/4TB/datasets/caltech/processed'
 
 config['TRAIN_DIR'] = f"{config['INPUT_DIR']}/train"
