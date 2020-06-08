@@ -12,19 +12,17 @@ if __name__ == '__main__':
                       pin_memory=False,
                       drop_last=True):
         df = pd.read_csv(csv_path)
-        dataset = ClassificationDataset(images_path, df, transformation, fields, training, mean_rgb=f"{config['INPUT_DIR']}/rgb_val.json")
+        # dataset = ClassificationDataset(images_path, df, transformation, fields, training, mean_rgb=f"{config['INPUT_DIR']}/rgb_val.json")
+        dataset = ClassificationDataset(images_path, df, transformation, fields, training)
         data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=pin_memory, drop_last=drop_last)
         return data_loader
 
 
     fields = {'image': 'image', 'label': 'class'}
     train_data_loader = getDataLoader(csv_path=config['TRAIN_CSV'], images_path=config['TRAIN_DIR'], transformation=train_transformation,
-                                      fields=fields,
-                                      training=True,
-                                      batch_size=128, shuffle=True, num_workers=16, pin_memory=True)
+                                      fields=fields, training=True, batch_size=128, shuffle=True, num_workers=16, pin_memory=True)
     val_data_loader = getDataLoader(csv_path=config['VALID_CSV'], images_path=config['VALID_DIR'], transformation=test_transformation, fields=fields,
-                                    training=False,
-                                    batch_size=64, shuffle=True, num_workers=8, pin_memory=True, drop_last=False)
+                                    training=False, batch_size=64, shuffle=True, num_workers=4, pin_memory=True, drop_last=False)
 
     e = Executor("", {'TRAIN': train_data_loader, 'VAL': val_data_loader}, config=config)
 

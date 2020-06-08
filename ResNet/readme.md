@@ -87,25 +87,27 @@ Here for the Caltech256 dataset used 29 layers of network with the following set
 | **Layer Type**           | **Output Size**     | **Kernel Size**     | **\# of Kernels**     | **Stride**     | **Padding**     |
 |--------------------------|---------------------|---------------------|-----------------------|----------------|-----------------|
 | Input Image              | 224 x 224 x 3       |                     |                       |                |                 |
-| DefaultConvolutionModule | 112 x 112 x 64      | 7                   | 64                    | 2              | 3               |
+| ConvWithPreActivation    | 112 x 112 x 64      | 7                   | 64                    | 2              | 3               |
 | MaxPool2d                | 56 x 56 x 64        | 3                   |                       | 2              | 1               |
-| DefaultConvolutionModule | 56 x 56 x 64        | 1                   | 64                    |                |                 |
-| DefaultConvolutionModule | 56 x 56 x 192       | 3                   | 192                   |                |                 |
-| MaxPool2d                | 28 x 28 x 192       | 3                   |                       | 2              | 1               |
-| **InceptionModule**          | 28 x 28 x 256       |                     |                       |                |                 |
-| **InceptionModule**          | 28 x 28 x 480       |                     |                       |                |                 |
-| MaxPool2d                | 14 x 14 x 480       | 3                   |                       | 2              | 1               |
-| **InceptionModule**          | 14 x 14 x 512       |                     |                       |                |                 |
-| **InceptionModule**          | 14 x 14 x 512       |                     |                       |                |                 |
-| **InceptionModule**          | 14 x 14 x 512       |                     |                       |                |                 |
-| **InceptionModule**          | 14 x 14 x 528       |                     |                       |                |                 |
-| **InceptionModule**          | 14 x 14 x 832       |                     |                       |                |                 |
-| MaxPool2d                | 7 x 7 x 832         | 3                   |                       | 2              | 1               |
-| **InceptionModule**          | 7 x 7 x 832         |                     |                       |                |                 |
-| **InceptionModule**          | 7 x 7 x 1024        |                     |                       |                |                 |
-| AdaptiveAvgPool2d        | 1 x 1 x 1024        |                     |                       |                |                 |
-| Dropout                  | 1 x 1 x 1024        |                     |                       |                |                 |
-| Flatten                  | 1 x 1024            |                     |                       |                |                 |
+| ResNetBottleNeck         | 56 x 56 x 256       |                     |                       |                |                 |
+| ResNetBottleNeck         | 56 x 56 x 256       |                     |                       |                |                 |
+| ResNetBottleNeck         | 56 x 56 x 256       |                     |                       |                |                 |
+| ResNetBottleNeck         | 28 x 28 x 512       |                     |                       |                |                 |
+| ResNetBottleNeck         | 28 x 28 x 512       |                     |                       |                |                 |
+| ResNetBottleNeck         | 28 x 28 x 512       |                     |                       |                |                 |
+| ResNetBottleNeck         | 28 x 28 x 512       |                     |                       |                |                 |
+| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
+| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
+| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
+| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
+| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
+| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
+| ResNetBottleNeck         | 7 x 7 x 2048        |                     |                       |                |                 |
+| ResNetBottleNeck         | 7 x 7 x 2048        |                     |                       |                |                 |
+| ResNetBottleNeck         | 7 x 7 x 2048        |                     |                       |                |                 |
+| ResNetBottleNeck         | 7 x 7 x 2048        |                     |                       |                |                 |
+| AdaptiveAvgPool2d        | 1 x 1 x 2048        |                     |                       |                |                 |
+| Flatten                  | 1 x 2048            |                     |                       |                |                 |
 | Linear                   | 1 x 256             |                     |                       |                |                 |
 | LogSoftmax               | 1 x 256             |                     |                       |                |                 |
 
@@ -118,6 +120,10 @@ Here for the Caltech256 dataset used 29 layers of network with the following set
   We will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 3 epochs
     - ReduceLROnPlateau is dependent on the validation set accuracy.  
 - Also, used **CosineAnnealingLR** instead of **ReduceLROnPlateau** with **Adam**.
+
+### Graphs
+Below is the graph showing the two different types of Identity Mapping used in ResNet.
+![Identity Mappings](img/identity_mapping.png) 
 
 ## Results
 

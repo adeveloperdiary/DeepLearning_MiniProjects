@@ -211,3 +211,17 @@ def resnet_29(num_classes=256):
     """
     layer_configs = [(128, 2), (256, 2), (512, 3), (1024, 2)]
     return ResNet(layer_configs=layer_configs, num_classes=num_classes)
+
+
+def resnet_26(num_classes=256):
+    """
+        This function defines the ResNet29 architecture with 50 convolution layers
+
+        :param num_classes: number of classes
+    """
+    layer_configs = [(128, 2), (256, 2), (512, 2), (1024, 2)]
+    return ResNet(layer_configs=layer_configs, num_classes=num_classes)
+
+
+m = resnet_50()
+m.print_network()
