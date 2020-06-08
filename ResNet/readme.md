@@ -189,8 +189,6 @@ from epoch 80 and reducing the learning rate further didnt help to gain validati
 | AlexNet          | 100        | 0\.0777           | 46\.51%                 | 99\.42%               |
 | ZFNet            | 100        | 0\.0701           | 49\.67%                 | 99\.43%               |
 | VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               |
-| GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               |
-| GoogLeNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               |
 | Resnet26         | 80         | 0\.8853           | 53\.28%                 | 80\.86%               |
 | Resnet20         | 80         | 0\.3557           | 59\.32%                 | 93\.54%               |
 
