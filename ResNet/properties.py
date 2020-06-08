@@ -4,7 +4,7 @@ import torch
 config = dict()
 
 config['PROJECT_NAME'] = 'resnet'
-config['INPUT_DIR'] = '/media/4TB/datasets/caltech/processed_resize'
+config['INPUT_DIR'] = '/media/4TB/datasets/caltech/processed'
 
 config['TRAIN_DIR'] = f"{config['INPUT_DIR']}/train"
 config['VALID_DIR'] = f"{config['INPUT_DIR']}/val"
@@ -14,7 +14,7 @@ config['VALID_CSV'] = f"{config['INPUT_DIR']}/val.csv"
 
 config['CHECKPOINT_INTERVAL'] = 10
 config['NUM_CLASSES'] = 256
-config['EPOCHS'] = 70
+config['EPOCHS'] = 150
 
 # ======================================= DEFAULT ============================================= #
 

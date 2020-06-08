@@ -81,7 +81,7 @@ class Executor(BaseExecutor):
         # Use different learning rate after epoch 70
         # self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9, weight_decay=0.0001, nesterov=True)
         # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001, weight_decay=0.0002)
-        # self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=5, eta_min=1e-7)
+        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=5, eta_min=1e-6)
         # Training Loop
         self.logger.info("Training starting now ...")
         for epoch in range(start_epoch, self.EPOCHS + 1):

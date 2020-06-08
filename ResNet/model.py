@@ -221,7 +221,3 @@ def resnet_26(num_classes=256):
     """
     layer_configs = [(128, 2), (256, 2), (512, 2), (1024, 2)]
     return ResNet(layer_configs=layer_configs, num_classes=num_classes)
-
-
-m = resnet_50()
-m.print_network()

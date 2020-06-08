@@ -53,15 +53,16 @@ There were only few types of data augmentation used. Following Data Augmentation
 albumentations library in the `ResNet.transformation.py` file.
 
 #### Training Data Augmentation    
-1. Random Crop of 224x224
-    - Original paper used center crop, I will be using Random Crop here.
-2. Mean RGB Normalization ( Like AlexNet, ZFNet ) 
-3. Horizontal Flip
-4. Random 90 Degree Rotation    
+1. Random Crop of 224x224    
+2. Normalization 
+3. ShiftScaleRotate
+4. RandomBrightnessContrast
+5. Equalize
+3. Horizontal Flip    
     
 #### Testing Data Augmentation
 1. Random Crop of 224x224 ( Same as training )
-2. Mean RGB Normalization. 
+2. Normalization 
 
 ## CNN Architecture
 
@@ -111,27 +112,33 @@ Here is the layer structure of ResNet 50 architecture.
 | Linear                   | 1 x 256             |                     |                       |                |                 |
 | LogSoftmax               | 1 x 256             |                     |                       |                |                 |
 
-
-## Training
-- Used **Stochastic Gradient Descent** with **Nesterov's momentum** 
-    - Also used **Adam** as alternative approach with initial learning rate as 0.001. 
-- Initial **Learning Rate** for SGD has been set to `0.01` ( The authors used 0.001 as initial lr)
-- In ResNet the learning rate was reduced manually, however we will be using Learning Rate Scheduler.
-  We will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 3 epochs
-    - ReduceLROnPlateau is dependent on the validation set accuracy.  
-- Also, used **CosineAnnealingLR** instead of **ReduceLROnPlateau** with **Adam**.
-
 ### Graphs
 Below is the graph showing the two different types of Identity Mapping used in ResNet.
 
 ![Identity Mappings](img/identity_mapping.png) 
 
+## Training
+In order to save time on training, a smaller variant of ResNet, with 26 Convolution/FC layer has been used.
+The config of the layers looks like below, where the first value of each tuple indicates the output filter/kernel size and
+the 2nd value is the number of time that specific resnet module needs to be replicated.
+
+```python
+[(128, 2), (256, 2), (512, 2), (1024, 2)]
+```  
+
+So combining all the Convolution/FC Layers we get ResNet 26.
+
+1 + 2\*3 + 2\*3 + 2\*3 + 2\*3 + 1  = 26 
+
+- Used **Stochastic Gradient Descent** with **Nesterov's momentum**      
+- Initial **Learning Rate** for SGD has been set to `0.01` ( The authors used 0.001 as initial lr)
+- In ResNet the learning rate was reduced manually, however we will be using Learning Rate Scheduler.
+  We will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 3 epochs
+    - ReduceLROnPlateau is dependent on the validation set accuracy.  
+
 ## Results
-
-### Approach 1:
-Used **Stochastic Gradient Descent** with **Nesterov's momentum** and **ReduceLROnPlateau** Learning rate scheduler.
-
-Here is the plot of Training/Validation Loss/Accuracy after 70 Epochs. The model is clearly over-fitting, more data augmentation will probably help. 
+Here is the plot of Training/Validation Loss/Accuracy after 120 Epochs. We can get more accuracy by using a larger model or
+more advanced optimization technique. 
 
 ![Training Plot](img/plot.png)
 
@@ -140,7 +147,8 @@ The is the plot of the learning rate decay.
 ![Training Plot](img/lr.png)
 
 ### Comparison with other architecture
-As shown below, the implemented model was able to achieve 55.17% Accuracy while training from scratch.
+As shown below, the implemented model was able to achieve ~53% Accuracy while training from scratch. Also the accuracy flattens 
+from epoch 80 and reducing the learning rate further didnt help to gain validation accuracy.
 
 | **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** | **Learning Rate**       |
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|:-----------------------:|
@@ -149,9 +157,10 @@ As shown below, the implemented model was able to achieve 55.17% Accuracy while 
 | VGG13            | 70         | 0\.0655           | 53\.45%                 | 99\.08%               | 0\.00125                |
 | GoogLeNet_SGD    | 70         | 0\.2786           | 55\.17%                 | 94\.89%               | 1\.953125e-05           |
 | GoogLeNet_Adam   | 90         | 0\.3104           | 61\.51%                 | 93\.64%               | 9\.63960113097139e-06   |
+| Resnet26         | 80         | 0\.8853           | 53\.28%                 | 80\.86%               | 0\.00125   |
 
 - The network was trained using 2 x NVIDIA 2080ti and 32Bit Floating Point.
-- 70 training epochs took 59.7 Minutes to complete.     
+- 80 training epochs took ~30 Minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing
@@ -169,9 +178,10 @@ As shown below, the implemented model was able to achieve 55.17% Accuracy while 
         OUTPUT_DIM = (256, 256)
         # If RGB mean is needed, set this to True
         RGB_MEAN = True
-        # If this is false, then the images will only be resized without preserving the aspect ratio.
-        CENTER_CROP = True
-        
+        # If this is true, then the images will only be resized while preserving the aspect ratio.
+        CENTER_CROP = False
+        # If this is true then the smaller side will be resized to the dimension defined above
+        SMALLER_SIDE_RESIZE = True        
         
         # Function to provide the logic to parse the class labels from the directory.
         def read_class_labels(path):
@@ -197,9 +207,9 @@ config['VALID_CSV'] = f"{config['INPUT_DIR']}/val.csv"
 
 config['CHECKPOINT_INTERVAL'] = 10
 config['NUM_CLASSES'] = 256
-config['EPOCHS'] = 70  
+config['EPOCHS'] = 80  
 
-config['MULTI_GPU'] = False
+config['MULTI_GPU'] = True
 config['FP16_MIXED'] = False
 
 config["LOGFILE"] = "output.log"
@@ -213,15 +223,15 @@ I am executing the script remotely from pycharm. Here is a sample output of the 
 sudo+ssh://home@192.168.50.106:22/home/home/.virtualenvs/dl4cv/bin/python3 -u /home/home/Documents/synch/mini_projects/ResNet/train.py
 Building model ...
 Training starting now ...
-100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=1, loss=4.9997, val acc=9.67, train acc=8.201, lr=0.001]                                                                                  
-100%|██████████| 191/191 [00:52<00:00,  3.61 batches/s, epoch=2, loss=4.499, val acc=13.639, train acc=12.128, lr=0.0009046039886902864]                                                                
-100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=3, loss=4.1048, val acc=16.923, train acc=16.091, lr=0.0006548539886902863]                                                               
-100%|██████████| 191/191 [00:53<00:00,  3.60 batches/s, epoch=4, loss=3.7222, val acc=21.251, train acc=20.967, lr=0.0003461460113097138]                                                               
-100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=5, loss=3.4461, val acc=25.368, train acc=25.36, lr=9.639601130971379e-05]                                                                
-100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=6, loss=3.3391, val acc=26.527, train acc=27.127, lr=1e-06]                                                                                                                                              
-100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=8, loss=3.4304, val acc=24.567, train acc=25.356, lr=0.000346146011309714]                                                                
-100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=9, loss=3.4815, val acc=21.66, train acc=24.452, lr=0.0006548539886902867]
-100%|██████████| 191/191 [00:53<00:00,  3.56 batches/s, epoch=10, loss=3.4207, val acc=25.025, train acc=25.094, lr=0.000904603988690287]
+100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=1, loss=5.3018, val acc=7.547, train acc=5.333, lr=0.01]                                                                                  
+100%|██████████| 191/191 [00:52<00:00,  3.61 batches/s, epoch=2, loss=4.8669, val acc=10.568, train acc==9.178, lr=0.01]                                                                
+100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=3, loss=4.6605, val acc=12.12, train acc=11.143, lr=0.01]                                                               
+100%|██████████| 191/191 [00:53<00:00,  3.60 batches/s, epoch=4, loss=4.4931, val acc=11.107, train acc=12.891, lr=0.01]                                                               
+100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=5, loss=4.3624, val acc=14.766, train acc=14.836, lr=0.01]                                                                
+100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=6, loss=4.2257, val acc=17.38, train acc=16.201, lr=0.01]                                                                                                                                              
+100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=8, loss=4.1086, val acc=15.567, train acc=17.689, lr=0.01]                                                                
+100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=9, loss=3.9859, val acc=19.471, train acc=19.285, lr=0.01]
+100%|██████████| 191/191 [00:53<00:00,  3.56 batches/s, epoch=10, loss=3.8662, val acc=18.458, train acc=21.118, lr=0.01]
 ```
 
 ## References

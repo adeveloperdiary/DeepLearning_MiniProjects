@@ -63,7 +63,21 @@ def resize_image(image):
             # Need to crop height
             delta = (height - width) // 2
             image = image[delta:-delta, :, :]
-    image = cv2.resize(image, OUTPUT_DIM)
+        image = cv2.resize(image, OUTPUT_DIM)
+
+    elif SMALLER_SIDE_RESIZE:
+        # Capture the width and height from the array
+        height, width, _ = image.shape
+        # Resize the image if width and height are same
+        if width == height:
+            image = cv2.resize(image, OUTPUT_DIM)
+        elif width < height:
+            new_height = int(height * OUTPUT_DIM[0] / width)
+            image = cv2.resize(image, (new_height, OUTPUT_DIM[1]))
+        else:
+            new_width = int(width * OUTPUT_DIM[1] / width)
+            image = cv2.resize(image, (OUTPUT_DIM[0], new_width))
+
     return image
 
 
