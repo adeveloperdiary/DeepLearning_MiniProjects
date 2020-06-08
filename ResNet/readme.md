@@ -89,19 +89,19 @@ Here for the Caltech256 dataset used 29 layers of network with the following set
 | Input Image              | 224 x 224 x 3       |                     |                       |                |                 |
 | ConvWithPreActivation    | 112 x 112 x 64      | 7                   | 64                    | 2              | 3               |
 | MaxPool2d                | 56 x 56 x 64        | 3                   |                       | 2              | 1               |
-| ResNetBottleNeck         | 56 x 56 x 256       |                     |                       |                |                 |
-| ResNetBottleNeck         | 56 x 56 x 256       |                     |                       |                |                 |
-| ResNetBottleNeck         | 56 x 56 x 256       |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 56 x 56 x 256       |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 56 x 56 x 256       |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 56 x 56 x 256       |                     |                       |                |                 |
 | ResNetBottleNeck         | 28 x 28 x 512       |                     |                       |                |                 |
 | ResNetBottleNeck         | 28 x 28 x 512       |                     |                       |                |                 |
 | ResNetBottleNeck         | 28 x 28 x 512       |                     |                       |                |                 |
 | ResNetBottleNeck         | 28 x 28 x 512       |                     |                       |                |                 |
-| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
-| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
-| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
-| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
-| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
-| ResNetBottleNeck         | 14 x 14 x 1024      |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 14 x 14 x 1024      |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 14 x 14 x 1024      |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 14 x 14 x 1024      |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 14 x 14 x 1024      |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 14 x 14 x 1024      |                     |                       |                |                 |
+| **ResNetBottleNeck**         | 14 x 14 x 1024      |                     |                       |                |                 |
 | ResNetBottleNeck         | 7 x 7 x 2048        |                     |                       |                |                 |
 | ResNetBottleNeck         | 7 x 7 x 2048        |                     |                       |                |                 |
 | ResNetBottleNeck         | 7 x 7 x 2048        |                     |                       |                |                 |
@@ -123,6 +123,7 @@ Here for the Caltech256 dataset used 29 layers of network with the following set
 
 ### Graphs
 Below is the graph showing the two different types of Identity Mapping used in ResNet.
+
 ![Identity Mappings](img/identity_mapping.png) 
 
 ## Results
