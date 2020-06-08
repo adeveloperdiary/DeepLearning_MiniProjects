@@ -27,7 +27,7 @@ class Executor(BaseExecutor):
         """
 
         # initialize the model
-        self.model = resnet_50(num_classes=self.NUM_CLASSES)
+        self.model = resnet_26(num_classes=self.NUM_CLASSES)
         # Save model to tensor board
         self.save_model_to_tensor_board()
 
@@ -38,7 +38,7 @@ class Executor(BaseExecutor):
 
         # Initialize the Optimizer
         # Need to call self.model.model.parameters() as model is an attribute in the Module function.
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9, weight_decay=0.0001, nesterov=True)
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001, nesterov=True)
 
         # Adam helps faster optimization of the algorithm.
         # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001, weight_decay=0.0001)
@@ -50,10 +50,10 @@ class Executor(BaseExecutor):
         # for a ‘patience’ number of epochs, the learning rate is reduced.
         # https://pytorch.org/docs/stable/optim.html?highlight=reducelronplateau#torch.optim.lr_scheduler.ReduceLROnPlateau
         # Here val accuracy has been used as the metric, hence set mode to 'max'
-        # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='max', factor=0.5, patience=4, verbose=False, threshold=0.01)
+        self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='max', factor=0.5, patience=4, verbose=False, threshold=0.01)
 
         # The CosineAnnealingLR learning rate scheduler provides a better accuracy and loss.
-        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=5, eta_min=1e-4)
+        #self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=5, eta_min=1e-4)
         # Define the Loss Function
         self.criterion = torch.nn.CrossEntropyLoss()
 
@@ -76,12 +76,7 @@ class Executor(BaseExecutor):
 
         # Load model from checkpoint if needed
         start_epoch = self.load_checkpoint()
-        # torch.autograd.set_detect_anomaly(True)
 
-        # Use different learning rate after epoch 70
-        # self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9, weight_decay=0.0001, nesterov=True)
-        # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001, weight_decay=0.0002)
-        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=5, eta_min=1e-6)
         # Training Loop
         self.logger.info("Training starting now ...")
         for epoch in range(start_epoch, self.EPOCHS + 1):
@@ -107,10 +102,10 @@ class Executor(BaseExecutor):
             eval_accuracy = self.post_training_loop_ops(epoch, train_accuracy)
 
             # Scheduler step() function
-            # self.scheduler.step(eval_accuracy / 100)
+            self.scheduler.step(eval_accuracy / 100)
 
             # use this for CosineAnnealingLR
-            self.scheduler.step()
+            # self.scheduler.step()
 
             # Close the progress bar
             self.pbar.close()
