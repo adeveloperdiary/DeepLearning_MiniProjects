@@ -73,12 +73,10 @@ Here are the layers defined by the authors.
 ![ResNet Layers](img/layers.png)
 
 Using the bottleneck design for better performance. Have 3 convolution layers, 1x1 (1/4 channel size) -> 3x3 (1/4 channel size) -> 1x1
-
-![ResNet Bottleneck](img/bottleneck.png)
-
 This implementation uses ResNet with Identity Mappings, hence have the Batch Normalization layer before the convolution layer.
 
-![Identity Mappings](img/identity.png)
+
+![ResNet Bottleneck](img/bottleneck.png)
 
 Here for the Caltech256 dataset used 29 layers of network with the following setup. 
 
