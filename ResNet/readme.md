@@ -131,14 +131,14 @@ So combining all the Convolution/FC Layers we get ResNet 26.
 
 1 + 2\*3 + 2\*3 + 2\*3 + 2\*3 + 1  = 26 
 
-### Training Parameters
+#### Training Parameters
 - Used **Stochastic Gradient Descent** with **Nesterov's momentum**      
 - Initial **Learning Rate** for SGD has been set to `0.01` ( The authors used 0.001 as initial lr)
 - In ResNet the learning rate was reduced manually, however we will be using Learning Rate Scheduler.
   We will use **ReduceLROnPlateau** and reduce the learning rate by a factor of 0.5, if there are no improvements after 3 epochs
     - ReduceLROnPlateau is dependent on the validation set accuracy.  
 
-### Result
+#### Result
 
 Here is the plot of Training/Validation Loss/Accuracy after 120 Epochs. We can get more accuracy by using a larger model or
 more advanced optimization technique. 
@@ -162,7 +162,7 @@ So combining all the Convolution/FC Layers we get ResNet 26.
 
 1 + 1\*3 + 2\*3 + 2\*3 + 1\*3 + 1  = 20
 
-### Training Parameters
+#### Training Parameters
 - Used **Adam** with **CosineAnnealingLR** learning rate scheduler.      
 - Initial **Learning Rate** for Adam has been set to `0.001`
 - The initial hyper-parameters of CosineAnnealingLR are set as following:
@@ -170,7 +170,7 @@ So combining all the Convolution/FC Layers we get ResNet 26.
     - eta_min : 1e-5 
 - After 50 epochs the **eta_min** hyper-parameter of CosineAnnealingLR was changed to 1e-7.
 
-### Result
+#### Result
 Here is the plot of Training/Validation Loss/Accuracy after 80 Epochs. We can get more accuracy by using a larger model or
 more advanced optimization technique. 
 
