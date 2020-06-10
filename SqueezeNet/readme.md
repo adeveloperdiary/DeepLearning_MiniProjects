@@ -17,6 +17,12 @@ This is the implementation of SqueezeNet, however there are many other common fa
             once PyTorch 1.6 has been released.
 7.  The network layers sizes can be printed to console for verification.  
 
+There are few functionality which were not implemented here,such as
+1. Simple and Complex Bypass
+2. Deep Compression  
+
+This implementation is focused on **Vanilla SqueezeNet**  
+
 ## Dataset
 The SqueezeNet paper used ImageNet dataset, however this implementation used another dataset named **Caltech256** which is very similar to Imagenet but 
 consists of only 256 Categories and around 30K images. Any decent GPU should be able to train using this  dataset in much 
@@ -104,9 +110,7 @@ Here is the layer structure of SqueezeNet 1.1 architecture.
 | LogSoftmax               | 1 x 256             |                     |                       |                |                 |
 
 ## Training & Result
-
-### Experiment 1
-#### Training Parameters
+### Training Parameters
 - Used **Adam** with **CosineAnnealingLR** learning rate scheduler.      
 - Initial **Learning Rate** for Adam has been set to `0.001`
 - The initial hyper-parameters of CosineAnnealingLR are set as following:
@@ -115,7 +119,6 @@ Here is the layer structure of SqueezeNet 1.1 architecture.
 - After 70 epochs the **eta_min** hyper-parameter of CosineAnnealingLR was changed to 1e-6.
 
 #### Result
-
 Here is the plot of Training/Validation Loss/Accuracy after 90 Epochs. We can get more accuracy by using a larger model or
 more advanced optimization technique. 
 
@@ -125,40 +128,9 @@ The is the plot of the learning rate decay.
 
 ![Training Plot](img/lr.png)
 
-### Experiment 2
-Trained another smaller variant of SqueezeNet, with 20 Convolution/FC layer has been used.
-The config of the layers looks like below, where the first value of each tuple indicates the output filter/kernel size and
-the 2nd value is the number of time that specific SqueezeNet module needs to be replicated.
-
-```python
-[(128, 1), (256, 2), (512, 2), (1024, 1)]
-```  
-
-So combining all the Convolution/FC Layers we get SqueezeNet 26.
-
-1 + 1\*3 + 2\*3 + 2\*3 + 1\*3 + 1  = 20
-
-#### Training Parameters
-- Used **Adam** with **CosineAnnealingLR** learning rate scheduler.      
-- Initial **Learning Rate** for Adam has been set to `0.001`
-- The initial hyper-parameters of CosineAnnealingLR are set as following:
-    - T_max   : 5
-    - eta_min : 1e-5 
-- After 50 epochs the **eta_min** hyper-parameter of CosineAnnealingLR was changed to 1e-7.
-
-#### Result
-Here is the plot of Training/Validation Loss/Accuracy after 80 Epochs. We can get more accuracy by using a larger model or
-more advanced optimization technique. 
-
-![Training Plot](img/plot_2.png)
-
-The is the plot of the learning rate decay.  
-
-![Training Plot](img/lr_2.png)
-
 ## Comparison with other architectures implemented
-As shown below, the implemented model was able to achieve ~53% Accuracy while training from scratch. Also the accuracy flattens 
-from epoch 80 and reducing the learning rate further didnt help to gain validation accuracy.
+As shown below, the implemented model was able to achieve 46.60% Accuracy while training from scratch which is similar to 
+AlexNet.
 
 | **Architecture** | **epochs** | **Training Loss** | **Validation Accuracy** | **Training Accuracy** |
 |:----------------:|:----------:|:-----------------:|:-----------------------:|:---------------------:|
@@ -168,7 +140,7 @@ from epoch 80 and reducing the learning rate further didnt help to gain validati
 
 
 - The network was trained using 2 x NVIDIA 2080ti and 32Bit Floating Point.
-- 80 training epochs took ~35-45 Minutes to complete.     
+- 80 training epochs took ~40 Minutes to complete.     
 
 ## How to run the scripts
 ### Pre-Processing
@@ -243,7 +215,7 @@ Training starting now ...
 ```
 
 ## References
-[[1] Identity Mappings in Deep Residual Networks](https://arxiv.org/pdf/1603.05027.pdf)
+[[1] SQUEEZENET: ALEXNET-LEVEL ACCURACY WITH 50X FEWER PARAMETERS AND <0.5MB MODEL SIZE](https://arxiv.org/pdf/1602.07360.pdf)
 
 [[2] Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf)
 

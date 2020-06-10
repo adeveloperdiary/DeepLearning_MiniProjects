@@ -38,10 +38,8 @@ class Executor(BaseExecutor):
 
         # Initialize the Optimizer
         # Need to call self.model.model.parameters() as model is an attribute in the Module function.
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001, nesterov=True)
-
         # Adam helps faster optimization of the algorithm.
-        # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001, weight_decay=0.0001)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001, weight_decay=0.0001)
 
         # Initialize the learning rate scheduler
         # Reduce learning rate when a metric has stopped improving.
@@ -53,7 +51,7 @@ class Executor(BaseExecutor):
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='max', factor=0.5, patience=3, verbose=False, threshold=0.01)
 
         # The CosineAnnealingLR learning rate scheduler provides a better accuracy and loss.
-        # self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=5, eta_min=1e-5)
+        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=5, eta_min=1e-5)
         # Define the Loss Function
         self.criterion = torch.nn.CrossEntropyLoss()
 
@@ -76,8 +74,6 @@ class Executor(BaseExecutor):
 
         # Load model from checkpoint if needed
         start_epoch = self.load_checkpoint()
-
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9, weight_decay=0.0001, nesterov=True)
 
         # Training Loop
         self.logger.info("Training starting now ...")
@@ -107,7 +103,7 @@ class Executor(BaseExecutor):
             # self.scheduler.step(eval_accuracy / 100)
 
             # use this for CosineAnnealingLR
-            # self.scheduler.step()
+            self.scheduler.step()
 
             # Close the progress bar
             self.pbar.close()

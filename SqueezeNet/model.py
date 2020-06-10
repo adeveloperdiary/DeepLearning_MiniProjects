@@ -151,6 +151,3 @@ class SqueezeNet(CNNBaseModel):
         """
         x = self.model(x)
         return x
-
-m=SqueezeNet()
-m.print_network()
