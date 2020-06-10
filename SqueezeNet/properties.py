@@ -19,7 +19,7 @@ config['EPOCHS'] = 200
 # ======================================= DEFAULT ============================================= #
 
 config['DEVICE'] = torch.device("cuda") if torch.cuda.is_available() else torch.device('cpu')
-config['MULTI_GPU'] = True
+config['MULTI_GPU'] = False
 config['FP16_MIXED'] = False
 
 config["LOGFILE"] = "output.log"

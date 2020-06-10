@@ -18,10 +18,10 @@ if __name__ == '__main__':
 
 
     fields = {'image': 'image', 'label': 'class'}
-    test_data_loader = getDataLoader(csv_path=config['TRAIN_CSV'], images_path=config['TRAIN_DIR'], transformation=test_transformation,
+    test_data_loader = getDataLoader(csv_path=config['VALID_CSV'], images_path=config['VALID_DIR'], transformation=test_transformation,
                                      fields=fields,
                                      training=False,
-                                     batch_size=128, shuffle=False, num_workers=4, pin_memory=True, drop_last=False)
+                                     batch_size=256, shuffle=False, num_workers=16, pin_memory=True, drop_last=False)
 
     e = Executor("", {'TEST': test_data_loader}, config=config)
 

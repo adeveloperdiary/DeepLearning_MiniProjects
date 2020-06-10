@@ -21,15 +21,17 @@ class Executor(BaseExecutor):
         super().__init__(data_loaders, config)
         self.version = version
 
-    def build_model(self):
+    def build_model(self, prediction=False):
         """
             This function is for instantiating the model, optimizer, learning rate scheduler and loss function.
         """
 
         # initialize the model
         self.model = SqueezeNet(num_classes=self.NUM_CLASSES)
-        # Save model to tensor board
-        self.save_model_to_tensor_board()
+
+        if not prediction:
+            # Save model to tensor board
+            self.save_model_to_tensor_board()
 
         self.enable_multi_gpu_training()
 
@@ -112,7 +114,7 @@ class Executor(BaseExecutor):
 
     def prediction(self):
         self.logger.info("Building model ...")
-        self.build_model()
+        self.build_model(prediction=True)
 
         # Load model from checkpoint
         self.load_checkpoint()
@@ -120,5 +122,5 @@ class Executor(BaseExecutor):
         test_accuracy, rank5_accuracy = self.prediction_accuracy()
 
         self.logger.info(f"Test rank 1 Accuracy is {test_accuracy} and rank 5 accuracy is {rank5_accuracy}")
-
+        print(f"Test rank 1 Accuracy is {test_accuracy} and rank 5 accuracy is {rank5_accuracy}")
         return test_accuracy
