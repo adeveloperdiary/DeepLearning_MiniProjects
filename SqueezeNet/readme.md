@@ -1,4 +1,4 @@
-# Implementation of SqueezeNet
+# Implementation of SqueezeNet using PyTorch
 This is the implementation of SqueezeNet, however there are many other common factors that were taken care such as:
 
 1.  Data Augmentation is outside of main class and can be defined in a 
@@ -203,15 +203,16 @@ I am executing the script remotely from pycharm. Here is a sample output of the 
 sudo+ssh://home@192.168.50.106:22/home/home/.virtualenvs/dl4cv/bin/python3 -u /home/home/Documents/synch/mini_projects/SqueezeNet/train.py
 Building model ...
 Training starting now ...
-100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=1, loss=5.3018, val acc=7.547, train acc=5.333, lr=0.01]                                                                                  
-100%|██████████| 191/191 [00:52<00:00,  3.61 batches/s, epoch=2, loss=4.8669, val acc=10.568, train acc==9.178, lr=0.01]                                                                
-100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=3, loss=4.6605, val acc=12.12, train acc=11.143, lr=0.01]                                                               
-100%|██████████| 191/191 [00:53<00:00,  3.60 batches/s, epoch=4, loss=4.4931, val acc=11.107, train acc=12.891, lr=0.01]                                                               
-100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=5, loss=4.3624, val acc=14.766, train acc=14.836, lr=0.01]                                                                
-100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=6, loss=4.2257, val acc=17.38, train acc=16.201, lr=0.01]                                                                                                                                              
-100%|██████████| 191/191 [00:53<00:00,  3.58 batches/s, epoch=8, loss=4.1086, val acc=15.567, train acc=17.689, lr=0.01]                                                                
-100%|██████████| 191/191 [00:53<00:00,  3.59 batches/s, epoch=9, loss=3.9859, val acc=19.471, train acc=19.285, lr=0.01]
-100%|██████████| 191/191 [00:53<00:00,  3.56 batches/s, epoch=10, loss=3.8662, val acc=18.458, train acc=21.118, lr=0.01]
+INFO:root:epoch=1, loss=5.2465, val acc=7.318, train acc=5.263, lr=0.001
+INFO:root:epoch=2, loss=4.8779, val acc=9.49, train acc=8.318, lr=0.000905463412215599
+INFO:root:epoch=3, loss=4.6193, val acc=11.336, train acc=11.036, lr=0.000657963412215599
+INFO:root:epoch=4, loss=4.3906, val acc=14.325, train acc=14.075, lr=0.0003520365877844011
+INFO:root:epoch=5, loss=4.1922, val acc=16.335, train acc=16.686, lr=0.00010453658778440106
+INFO:root:epoch=6, loss=4.1104, val acc=16.661, train acc=17.85, lr=1e-05
+INFO:root:epoch=7, loss=4.1201, val acc=17.168, train acc=17.586, lr=0.00010453658778440102
+INFO:root:epoch=8, loss=4.1607, val acc=16.465, train acc=16.76, lr=0.0003520365877844012
+INFO:root:epoch=9, loss=4.1984, val acc=16.825, train acc=16.336, lr=0.0006579634122155993
+INFO:root:epoch=10, loss=4.1244, val acc=17.364, train acc=17.545, lr=0.0009054634122155996
 ```
 
 ## References

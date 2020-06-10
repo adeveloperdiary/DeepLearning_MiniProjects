@@ -14,7 +14,7 @@ config['VALID_CSV'] = f"{config['INPUT_DIR']}/val.csv"
 
 config['CHECKPOINT_INTERVAL'] = 10
 config['NUM_CLASSES'] = 256
-config['EPOCHS'] = 170
+config['EPOCHS'] = 200
 
 # ======================================= DEFAULT ============================================= #
 

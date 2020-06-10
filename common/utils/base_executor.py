@@ -154,6 +154,8 @@ class BaseExecutor(InitExecutor):
         # global variable
         correct = 0
         total = 0
+        correct_rank5 = 0
+        total_rank5 = 0
         pbar = tqdm(total=len(self.test_data_loader), bar_format='{l_bar}{bar:10}{r_bar}{bar:-10b}', unit=' batches', ncols=200)
 
         # with no gradient mode on
@@ -168,13 +170,15 @@ class BaseExecutor(InitExecutor):
                 predictions = self.model(images)
 
                 total, correct = self.cal_prediction(predictions, labels, total, correct)
+                total_rank5, correct_rank5 = self.rank5_accuracy(predictions, labels, total_rank5, correct_rank5)
 
                 pbar.update()
 
         pbar.close()
         # calculate the accuracy in percentage
         accuracy = (100 * correct / total)
-        return accuracy
+        rank5_accuracy = (100 * correct_rank5 / total_rank5)
+        return accuracy, rank5_accuracy
 
     def create_checkpoint_folder(self):
         """
@@ -374,5 +378,26 @@ class BaseExecutor(InitExecutor):
         labels = labels.squeeze()
 
         correct += (predicted == labels).sum().item()
+
+        return total, correct
+
+    @staticmethod
+    def rank5_accuracy(predictions, labels, total, correct):
+
+        _, predicted = torch.topk(predictions, k=5, dim=1)
+
+        # labels tensor is of dimension [ batch x 1 ],
+        # hence labels.size(0) will provide the number of images / batch size
+        total += labels.size(0)
+
+        # Reduce the dimension of labels from [batch x 1] -> [batch]
+        labels = labels.squeeze()
+
+        predicted = predicted.cpu().detach().numpy()
+        labels = labels.cpu().detach().numpy()
+
+        for i in range(labels.shape[0]):
+            if labels[i] in predicted[i]:
+                correct += 1
 
         return total, correct
