@@ -218,7 +218,7 @@ INFO:root:epoch=10, loss=4.1244, val acc=17.364, train acc=17.545, lr=0.00090546
 ## References
 [[1] SQUEEZENET: ALEXNET-LEVEL ACCURACY WITH 50X FEWER PARAMETERS AND <0.5MB MODEL SIZE](https://arxiv.org/pdf/1602.07360.pdf)
 
-[[2] Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385.pdf)
+[[2] ImageNet Classification with Deep Convolutional Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
 
 [[3] Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/abs/1502.03167) 
 
