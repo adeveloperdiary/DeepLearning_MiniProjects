@@ -1,10 +1,5 @@
-from torch.utils.data import DataLoader
 from AlexNet.model import AlexNetModel
-from common.dataset.dataset import ClassificationDataset
-import pandas as pd
-from AlexNet.transformation import *
-import timeit
-from common.utils.base_executor import *
+from common.torch.utils.base_executor import *
 
 """
     The Executor class is responsible for the training and testing of the AlexNet paper. It takes the data loaders and

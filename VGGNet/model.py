@@ -1,9 +1,4 @@
-import numpy as np
-import cv2
-
-import torch
-import torch.nn as nn
-from common.utils.model_util import *
+from common.torch.utils.model_util import *
 
 """
     This is the implementation of the VGG Architecture using PyTorch Library  
@@ -14,7 +9,7 @@ from common.utils.model_util import *
     4.  Use Xavier Normal initialization instead of initializing just from a normal distribution and use that to initialize in retraining 
         with more depth in the architecture ( A -> B -> D -> E ). 
     
-    Some of the below code was taken from pytorch code base.
+    Some of the below code was taken from torch code base.
              
 """
 

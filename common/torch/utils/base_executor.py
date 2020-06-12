@@ -1,8 +1,8 @@
 import torch
-from common.utils.training_util import *
+from common.torch.utils.training_util import *
 from tqdm import tqdm
 from apex import amp
-from common.utils.init_executor import *
+from common.torch.utils.init_executor import *
 
 """
     This class was written to reduce and simply the lines of reusable codes needed for a functioning 
@@ -347,6 +347,9 @@ class BaseExecutor(InitExecutor):
         # load a batch from the validation data loader
         loader = iter(self.val_data_loader)
         images, labels, _ = loader.next()
+        if self.tb_writer is None:
+            now = datetime.now()
+            self.tb_writer = SummaryWriter(log_dir=f'runs/{self.PROJECT_NAME}_{now.strftime("%Y%m%d-%H%M%S")}')
 
         # save the model graph to tensor board
         self.tb_writer.add_graph(self.model, images)
@@ -361,7 +364,7 @@ class BaseExecutor(InitExecutor):
         # Each value is a probability of the corresponding class
         # the torch.max() function is similar to the np.argmax() function,
         # where dim is the dimension to reduce.
-        # outputs.data is not needed as from pytorch version 0.4.0
+        # outputs.data is not needed as from torch version 0.4.0
         # its no longer needed to access the underlying data of the tensor.
         # the first value in the tuple is the actual probability and
         # the 2nd value is the indexes corresponding to the max probability for that row

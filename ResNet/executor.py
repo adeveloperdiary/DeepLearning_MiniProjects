@@ -1,9 +1,5 @@
 from ResNet.model import *
-from common.dataset.dataset import ClassificationDataset
-import pandas as pd
-from ResNet.transformation import *
-import timeit
-from common.utils.base_executor import *
+from common.torch.utils.base_executor import *
 
 """
     The Executor class is responsible for the training and testing of the ResNet paper. It takes the data loaders and

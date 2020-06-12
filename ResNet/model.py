@@ -1,9 +1,5 @@
-import numpy as np
-import cv2
-
-import torch
 import torch.nn as nn
-from common.utils.model_util import *
+from common.torch.utils.model_util import *
 
 """
     This is the implementation of the ResNet Architecture using PyTorch Library  

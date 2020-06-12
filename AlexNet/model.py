@@ -1,9 +1,5 @@
-import numpy as np
-import cv2
-
 import torch
-import torch.nn as nn
-import common.utils.model_util as model_util
+import common.torch.utils.model_util as model_util
 
 """
     This is the implementation of the AlexNet Architecture using PyTorch Library  

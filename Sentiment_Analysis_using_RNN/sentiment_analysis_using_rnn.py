@@ -312,7 +312,7 @@ def create_traing_test_val_set(reviews_ndarray, labels_ndarray, train_frac=0.8):
 
 def create_batches(train_x, train_y, val_x, val_y, test_x, test_y, batch_size):
     """
-    Create batches using pytorch's TensorDataset and DataLoader
+    Create batches using torch's TensorDataset and DataLoader
 
     :arguments:
     ----------------------------------------

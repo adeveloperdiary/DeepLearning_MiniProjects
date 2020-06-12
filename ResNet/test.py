@@ -1,9 +1,8 @@
 from torch.utils.data import DataLoader
-from common.dataset.dataset import ClassificationDataset
+from common.torch.dataset.dataset import ClassificationDataset
 import pandas as pd
 from ResNet.transformation import *
 import timeit
-from common.utils.base_executor import *
 from ResNet.executor import *
 from ResNet.properties import *
 

@@ -3,8 +3,7 @@ from glob import glob
 import cv2
 from tqdm import tqdm
 import tracemalloc
-import matplotlib.pyplot as plt
-from common.preprocessing.properties import *
+from common.torch.preprocessing.properties import *
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import uuid

@@ -1,9 +1,4 @@
-from torch.utils.data import DataLoader
-from common.dataset.dataset import ClassificationDataset
-import pandas as pd
-from AlexNet.transformation import *
-import timeit
-from common.utils.base_executor import *
+from common.torch.dataset.dataset import ClassificationDataset
 from AlexNet.executor import *
 
 if __name__ == '__main__':
