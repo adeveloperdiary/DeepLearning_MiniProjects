@@ -1,10 +1,10 @@
 from torch.utils.data import DataLoader
 from common.torch.dataset.dataset import ClassificationDataset
 import pandas as pd
-from AlexNet.transformation import *
+from DenseNet.transformation import *
 import timeit
-from AlexNet.executor import *
-from AlexNet.properties import *
+from DenseNet.executor import *
+from DenseNet.properties import *
 
 if __name__ == '__main__':
     def getDataLoader(csv_path, images_path, transformation, fields, training=False, batch_size=16, shuffle=False, num_workers=4,
@@ -12,18 +12,16 @@ if __name__ == '__main__':
                       drop_last=True):
         df = pd.read_csv(csv_path)
         dataset = ClassificationDataset(images_path, df, transformation, fields, training, mean_rgb=f"{config['INPUT_DIR']}/rgb_val.json")
+        # dataset = ClassificationDataset(images_path, df, transformation, fields, training)
         data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=pin_memory, drop_last=drop_last)
         return data_loader
 
 
     fields = {'image': 'image', 'label': 'class'}
     train_data_loader = getDataLoader(csv_path=config['TRAIN_CSV'], images_path=config['TRAIN_DIR'], transformation=train_transformation,
-                                      fields=fields,
-                                      training=True,
-                                      batch_size=256, shuffle=True, num_workers=16, pin_memory=True)
+                                      fields=fields, training=True, batch_size=768, shuffle=True, num_workers=16, pin_memory=True)
     val_data_loader = getDataLoader(csv_path=config['VALID_CSV'], images_path=config['VALID_DIR'], transformation=test_transformation, fields=fields,
-                                    training=False,
-                                    batch_size=16, shuffle=True, num_workers=4, pin_memory=True, drop_last=False)
+                                    training=False, batch_size=64, shuffle=True, num_workers=4, pin_memory=True, drop_last=False)
 
     e = Executor("", {'TRAIN': train_data_loader, 'VAL': val_data_loader}, config=config)
 
