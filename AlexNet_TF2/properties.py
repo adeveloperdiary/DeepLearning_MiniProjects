@@ -13,7 +13,13 @@ config['VALID_CSV'] = f"{config['INPUT_DIR']}/val.csv"
 
 config['CHECKPOINT_INTERVAL'] = 10
 config['NUM_CLASSES'] = 257
-config['EPOCHS'] = 100
+config['EPOCHS'] = 20
+
+config['TRAIN_DATA_SIZE'] = 24000
+config['TRAIN_BATCH_SIZE'] = 128
+
+config['VAL_DATA_SIZE'] = 6000
+config['VAL_BATCH_SIZE'] = 32
 
 # ======================================= DEFAULT ============================================= #
 

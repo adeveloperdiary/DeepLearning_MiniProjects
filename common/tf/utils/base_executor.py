@@ -3,6 +3,7 @@ from common.tf.utils.training_util import *
 from tqdm import tqdm
 from apex import amp
 from common.tf.utils.init_executor import *
+import numpy as np
 
 """
     This class was written to reduce and simply the lines of reusable codes needed for a functioning 
@@ -148,37 +149,40 @@ class BaseExecutor(InitExecutor):
             This function is for predicting test accuracy
         """
 
-        # Set the model to eval mode.
-        self.model.eval()
-
-        # global variable
-        correct = 0
-        total = 0
+        # Create int variable for storing the correct prediction
+        correct_rank1 = 0
         correct_rank5 = 0
-        total_rank5 = 0
-        pbar = tqdm(total=len(self.test_data_loader), bar_format='{l_bar}{bar:10}{r_bar}{bar:-10b}', unit=' batches', ncols=200)
 
-        # with no gradient mode on
-        with torch.no_grad():
-            # Loop through the validation data loader
-            for images, labels, _ in self.test_data_loader:
-                # Move the tensors to GPU
-                images = images.to(self.DEVICE)
-                labels = labels.to(self.DEVICE)
+        # Invoke the predict_proba() method, since Dataset is being used, batch_size needs to be set as None.
+        # The predict_proba() method returns a NumPy array ( not Tensor ) of size [ # of Samples x # of Classes ]
+        predicted = self.model.predict_proba(self.test_data_loader, batch_size=None)
 
-                # Forward pass
-                predictions = self.model(images)
+        # Find the total number of test sample
+        total = predicted.shape[0]
 
-                total, correct = self.cal_prediction(predictions, labels, total, correct)
-                total_rank5, correct_rank5 = self.rank5_accuracy(predictions, labels, total_rank5, correct_rank5)
+        # Create a list for string the target class labels.
+        target = []
 
-                pbar.update()
+        # Iterate the dataset object and store the target class labels.
+        for image, label in self.test_data_loader:
+            target.extend(label.numpy().squeeze().tolist())
 
-        pbar.close()
-        # calculate the accuracy in percentage
-        accuracy = (100 * correct / total)
-        rank5_accuracy = (100 * correct_rank5 / total_rank5)
-        return accuracy, rank5_accuracy
+        # Combine the predicted and target class labels to calculate the accuracies
+        for t, p in zip(target, predicted):
+
+            # First use argsort to get the class labels then reverse it to arrange from height to lowest
+            p = np.argsort(p)[::-1]
+
+            # Rank 5 Accuracy
+            if t in p[:5]:
+                correct_rank5 += 1
+
+            # Rank 1 Accuracy
+            if t == p[0]:
+                correct_rank1 += 1
+
+        # Return the values
+        return correct_rank1 / total, correct_rank5 / total
 
     def create_checkpoint_folder(self):
         """
@@ -404,3 +408,15 @@ class BaseExecutor(InitExecutor):
                 correct += 1
 
         return total, correct
+
+    def keras_fit_function(self, params={}):
+
+        fit_params = {
+            'epochs': self.EPOCHS,
+            'steps_per_epoch': int(self.TRAIN_DATA_SIZE / self.TRAIN_BATCH_SIZE),
+            'validation_steps': int(self.VAL_DATA_SIZE / self.VAL_BATCH_SIZE)
+        }
+
+        fit_params.update(params)
+
+        history = self.model.fit(self.train_data_loader, validation_data=self.val_data_loader, **fit_params)

@@ -30,10 +30,7 @@ class Executor(BaseExecutor):
 
         # self.enable_multi_gpu_training()
 
-        # Send the model to GPU
-
         # Initialize the Optimizer
-        # Need to call self.model.model.parameters() as model is an attribute in the Module function.
         self.optimizer = tf.keras.optimizers.SGD(learning_rate=0.1, momentum=0.9, decay=0.0005)
 
         # Initialize the learning rate scheduler
@@ -46,7 +43,7 @@ class Executor(BaseExecutor):
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='min', factor=0.5, patience=5, verbose=False)
 
         # Define the Loss Function
-        # self.criterion = torch.nn.CrossEntropyLoss()
+        self.criterion = tf.keras.losses.sparse_categorical_crossentropy
 
         # Loss Average
         # self.train_loss_hist = AverageLoss()
@@ -54,7 +51,7 @@ class Executor(BaseExecutor):
         # Enable Precision Mode
         # self.enable_precision_mode()
 
-        self.criterion = tf.keras.losses.sparse_categorical_crossentropy
+        # Compile the Model
         self.model.compile(optimizer=self.optimizer, loss=self.criterion, metrics=['accuracy'])
 
     def train(self):
@@ -73,7 +70,13 @@ class Executor(BaseExecutor):
 
         # Training Loop
         self.logger.info("Training starting now ...")
-        history = self.model.fit(self.train_data_loader, epochs=10, steps_per_epoch=190, validation_data=self.val_data_loader, validation_steps=20)
+
+        # Any Keras supported values can be passed to the keras_fit_function() method.
+        # 'validation_split' could be used in case separate validation data is not available, however cant be used with tf Dataset
+        # 'class_weight' can also be used for imbalance datasets. Ex: { 0: 1., 1: 50., 2: 2.}. 1 has more weights and 0 and 2.
+        # 'sample_weight' is for per training instance and should have same dimension as the training chunk.
+        #       - If both sample_weights and class_weights are provided, the weights are multiplied together.
+        self.keras_fit_function()
 
         """
         for epoch in range(start_epoch, self.EPOCHS + 1):
@@ -108,15 +111,29 @@ class Executor(BaseExecutor):
         
         """
 
-    def prediction(self):
+    def evaluate(self):
         self.logger.info("Building model ...")
         self.build_model()
 
         # Load model from checkpoint
         self.load_checkpoint()
 
-        test_accuracy = self.prediction_accuracy()
+        self.model.evaluate(self.test_data_loader)
 
-        self.logger.info(f"Test Prediction Accuracy is {test_accuracy}")
+    def prediction(self):
+        '''
+        This function is for predicting the rank 1 and rank 5 accuracy
+        '''
 
-        return test_accuracy
+        self.logger.info("Building model ...")
+        self.build_model()
+
+        # Load model from checkpoint
+        # self.load_checkpoint()
+
+        # Calculate the accuracy
+        rank1_accuracy, rank5_accuracy = self.prediction_accuracy()
+
+        self.logger.info(f"Test rank 1 Accuracy is {rank1_accuracy} and rank 5 accuracy is {rank5_accuracy}")
+
+        return rank1_accuracy, rank5_accuracy

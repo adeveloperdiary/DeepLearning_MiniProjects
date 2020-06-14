@@ -50,25 +50,28 @@ def convert_to_float32(image, label):
     return image, label
 
 
-def get_dataset_from_tfrecord(image_size=227, batch_size=32, buffer=1000, tf_files=None, train=False):
+def get_dataset_from_tfrecord(image_size=227, batch_size=32, buffer=1000, repeat=-1, tf_files=None, train=False):
     record_files = tf.data.Dataset.list_files(tf_files)
     dataset = tf.data.TFRecordDataset(filenames=record_files)
 
     dataset = dataset.map(read_from_tfrecord(image_size), num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-    return pre_process(dataset, batch_size=batch_size, buffer=buffer, train=train)
+    return pre_process(dataset, batch_size=batch_size, buffer=buffer, repeat=repeat, train=train)
 
 
-def pre_process(dataset, batch_size, buffer, train):
+def pre_process(dataset, batch_size, buffer, repeat, train):
     if train:
         dataset = dataset.map(tf_train_transformation, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-    dataset = dataset.map(convert_to_float32, num_parallel_calls=tf.data.experimental.AUTOTUNE).repeat()
+    dataset = dataset.map(convert_to_float32, num_parallel_calls=tf.data.experimental.AUTOTUNE).repeat(count=repeat)
 
     if train:
         dataset = dataset.shuffle(buffer_size=buffer, reshuffle_each_iteration=True)
 
-    dataset = dataset.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
+    if batch_size > 0:
+        dataset = dataset.batch(batch_size)
+
+    dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
 
     return dataset
 

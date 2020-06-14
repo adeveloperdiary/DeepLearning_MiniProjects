@@ -2,6 +2,8 @@ from torch.utils.data import DataLoader
 from common.torch.dataset.dataset import ClassificationDataset
 from SqueezeNet.executor import *
 from SqueezeNet.properties import *
+import timeit
+import pandas as pd
 
 if __name__ == '__main__':
     def getDataLoader(csv_path, images_path, transformation, fields, training=False, batch_size=16, shuffle=False, num_workers=4,

@@ -44,6 +44,11 @@ class InitExecutor(object):
         self.MULTI_GPU = None
         self.FP16_MIXED = None
 
+        self.TRAIN_DATA_SIZE = None
+        self.TRAIN_BATCH_SIZE = None
+        self.VAL_DATA_SIZE = None
+        self.VAL_BATCH_SIZE = None
+
     def init_logging(self):
         """
             Initialize the logger so that both console and file logging can be enabled
