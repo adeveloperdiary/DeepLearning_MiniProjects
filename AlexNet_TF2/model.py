@@ -44,7 +44,7 @@ def AlexNetModel(num_classes):
         tf.keras.layers.Dropout(rate=0.5),
 
         tf.keras.layers.Dense(units=num_classes, kernel_regularizer=tf.keras.regularizers.l2(0.0002)),
-        tf.keras.layers.Softmax()
+        tf.keras.layers.Softmax(dtype='float32')
     ])
 
     return model

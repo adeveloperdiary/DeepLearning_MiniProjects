@@ -23,6 +23,9 @@ class Executor(BaseExecutor):
             This function is for instantiating the model, optimizer, learning rate scheduler and loss function.
         """
 
+        # Enable Precision Mode
+        self.enable_precision_mode()
+
         # initialize the model
         self.model = AlexNetModel(num_classes=self.NUM_CLASSES)
         # Save model to tensor board
@@ -48,11 +51,18 @@ class Executor(BaseExecutor):
         # Loss Average
         # self.train_loss_hist = AverageLoss()
 
-        # Enable Precision Mode
-        # self.enable_precision_mode()
-
         # Compile the Model
         self.model.compile(optimizer=self.optimizer, loss=self.criterion, metrics=['accuracy'])
+
+    """
+    pending:
+    1. Add Callbacks:
+        - lr scheduler
+    2. Multi GPU Training
+    4. Load/Save Custom Models
+    5. Custom Training Loop
+    
+    """
 
     def train(self):
         """
@@ -63,10 +73,7 @@ class Executor(BaseExecutor):
         self.logger.info("Building model ...")
         self.build_model()
 
-        # self.create_checkpoint_folder()
-
-        # Load model from checkpoint if needed
-        # start_epoch = self.load_checkpoint()
+        self.create_checkpoint_folder()
 
         # Training Loop
         self.logger.info("Training starting now ...")
@@ -77,39 +84,6 @@ class Executor(BaseExecutor):
         # 'sample_weight' is for per training instance and should have same dimension as the training chunk.
         #       - If both sample_weights and class_weights are provided, the weights are multiplied together.
         self.keras_fit_function()
-
-        """
-        for epoch in range(start_epoch, self.EPOCHS + 1):
-
-            # Invoke the pre training operations
-            self.pre_training_loop_ops()
-
-            correct = 0
-            total = 0
-            for i, (images, labels, _) in enumerate(self.train_data_loader):
-                images = images.to(self.DEVICE)
-                labels = labels.to(self.DEVICE)
-
-                predictions = self.forward_backward_pass(images, labels, epoch, i)
-
-                # Calculate Train Accuracy
-                total, correct = self.cal_prediction(predictions, labels, total, correct)
-
-            # Calculate the training accuracy
-            train_accuracy = (100 * correct) / total
-
-            # Invoke the post training operations
-            self.post_training_loop_ops(epoch, train_accuracy)
-
-            # Scheduler step() function
-            self.scheduler.step(self.train_loss_hist.value)
-
-            # Close the progress bar
-            self.pbar.close()
-
-        self.tb_writer.close()
-        
-        """
 
     def evaluate(self):
         self.logger.info("Building model ...")
@@ -129,7 +103,7 @@ class Executor(BaseExecutor):
         self.build_model()
 
         # Load model from checkpoint
-        # self.load_checkpoint()
+        self.load_checkpoint(test=True)
 
         # Calculate the accuracy
         rank1_accuracy, rank5_accuracy = self.prediction_accuracy()

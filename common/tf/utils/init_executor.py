@@ -26,7 +26,7 @@ class InitExecutor(object):
         self.train_acc = None
         self.train_loss = None
         self.val_loss = None
-        self.learning_rate = None
+        self.learning_rate_cache = None
 
         self.CHECKPOINT_PATH = None
         self.CHECKPOINT_INTERVAL = None
@@ -43,6 +43,7 @@ class InitExecutor(object):
         self.LOGLEVEL = None
         self.MULTI_GPU = None
         self.FP16_MIXED = None
+        self.LEARNING_RATE = None
 
         self.TRAIN_DATA_SIZE = None
         self.TRAIN_BATCH_SIZE = None
