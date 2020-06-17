@@ -33,35 +33,14 @@ def read_from_fs(size):
     return inner_fs
 
 
-def tf_train_transformation(image, label):
-    image = tf.image.random_flip_left_right(image)
-    option = random.randint(0, 1)
-    if option == 0:
-        image = tf.image.random_hue(image, 0.1)
-        image = tf.image.random_brightness(image, 0.4)
-    else:
-        image = tf.image.random_saturation(image, 0.6, 1.6)
-        image = tf.image.random_contrast(image, 0.7, 1.3)
-    return image, label
-
-
 def convert_to_float32(image, label):
     image = tf.image.convert_image_dtype(image, tf.float32)
     return image, label
 
 
-def get_dataset_from_tfrecord(image_size=227, batch_size=32, buffer=1000, repeat=-1, tf_files=None, train=False):
-    record_files = tf.data.Dataset.list_files(tf_files)
-    dataset = tf.data.TFRecordDataset(filenames=record_files)
-
-    dataset = dataset.map(read_from_tfrecord(image_size), num_parallel_calls=tf.data.experimental.AUTOTUNE)
-
-    return pre_process(dataset, batch_size=batch_size, buffer=buffer, repeat=repeat, train=train)
-
-
-def pre_process(dataset, batch_size, buffer, repeat, train):
+def pre_process(dataset, batch_size, buffer, repeat, train, train_transformation):
     if train:
-        dataset = dataset.map(tf_train_transformation, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        dataset = dataset.map(train_transformation, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
     dataset = dataset.map(convert_to_float32, num_parallel_calls=tf.data.experimental.AUTOTUNE).repeat(count=repeat)
 
@@ -76,7 +55,16 @@ def pre_process(dataset, batch_size, buffer, repeat, train):
     return dataset
 
 
-def get_dataset_from_csv(csv_path, images_path, fields, image_size=227, batch_size=32, buffer=1000, train=False):
+def get_dataset_from_tfrecord(image_size=227, batch_size=32, buffer=1000, repeat=-1, tf_files=None, train=False, train_transformation=None):
+    record_files = tf.data.Dataset.list_files(tf_files)
+    dataset = tf.data.TFRecordDataset(filenames=record_files)
+
+    dataset = dataset.map(read_from_tfrecord(image_size), num_parallel_calls=tf.data.experimental.AUTOTUNE)
+
+    return pre_process(dataset, batch_size=batch_size, buffer=buffer, repeat=repeat, train=train, train_transformation=train_transformation)
+
+
+def get_dataset_from_csv(csv_path, images_path, fields, image_size=227, batch_size=32, buffer=1000, train=False, train_transformation=None):
     df = pd.read_csv(csv_path)
     paths = df[fields['image']].values
     labels = df[fields['label']].values
@@ -100,4 +88,4 @@ def get_dataset_from_csv(csv_path, images_path, fields, image_size=227, batch_si
 
     dataset = dataset.map(read_from_fs(image_size), num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-    return pre_process(dataset, batch_size=batch_size, buffer=buffer, train=train)
+    return pre_process(dataset, batch_size=batch_size, buffer=buffer, train=train, train_transformation=train_transformation)

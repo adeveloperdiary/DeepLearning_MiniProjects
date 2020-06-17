@@ -7,8 +7,7 @@ from common.tf.utils.base_executor import *
     configuration (properties.py) as the input. This extends the parents class BaseExecutor, which 
     contains many boilerplate reusable methods.  
 
-    This class was written to reduce and simply the lines of reusable codes needed for a functioning 
-    CNN.
+    This class was written to reduce and simply the lines of reusable codes needed for a functioning CNN.
 
 """
 
@@ -22,43 +21,25 @@ class Executor(BaseExecutor):
         """
             This function is for instantiating the model, optimizer, learning rate scheduler and loss function.
         """
-
-        # Enable Precision Mode
+        # Enable Precision Mode before getting the model
         self.enable_precision_mode()
 
         # initialize the model
         self.model = AlexNetModel(num_classes=self.NUM_CLASSES)
-        # Save model to tensor board
-        # self.save_model_to_tensor_board()
 
         # self.enable_multi_gpu_training()
 
         # Initialize the Optimizer
-        self.optimizer = tf.keras.optimizers.SGD(learning_rate=0.1, momentum=0.9, decay=0.0005)
-
-        # Initialize the learning rate scheduler
-        # Reduce learning rate when a metric has stopped improving.
-        # Models often benefit from reducing the learning rate by a factor of 2-10 once learning stagnates.
-        # This scheduler reads a metrics quantity and if no improvement is seen
-        # for a ‘patience’ number of epochs, the learning rate is reduced.
-        # https://pytorch.org/docs/stable/optim.html?highlight=reducelronplateau#torch.optim.lr_scheduler.ReduceLROnPlateau
-        # Here val accuracy has been used as the metric, hence set mode to 'max'
-        # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='min', factor=0.5, patience=5, verbose=False)
+        self.optimizer = tf.keras.optimizers.SGD(learning_rate=0.1, momentum=0.9, decay=0.0001)
 
         # Define the Loss Function
         self.criterion = tf.keras.losses.sparse_categorical_crossentropy
-
-        # Loss Average
-        # self.train_loss_hist = AverageLoss()
 
         # Compile the Model
         self.model.compile(optimizer=self.optimizer, loss=self.criterion, metrics=['accuracy'])
 
     """
-    pending:
-    1. Add Callbacks:
-        - lr scheduler
-    2. Multi GPU Training
+    pending:    
     4. Load/Save Custom Models
     5. Custom Training Loop
     
@@ -70,10 +51,10 @@ class Executor(BaseExecutor):
         """
 
         # Build the model
-        self.logger.info("Building model ...")
-        self.build_model()
+        self.call_build_model()
 
-        self.create_checkpoint_folder()
+        # Define the checkpoint folder if needed
+        self.define_checkpoint_folder()
 
         # Training Loop
         self.logger.info("Training starting now ...")
@@ -86,21 +67,24 @@ class Executor(BaseExecutor):
         self.keras_fit_function()
 
     def evaluate(self):
-        self.logger.info("Building model ...")
-        self.build_model()
+        # Build the model
+        # self.logger.info("Building model ...")
+        # self.build_model()
 
         # Load model from checkpoint
         self.load_checkpoint()
 
+        # Involve the evaluate function
         self.model.evaluate(self.test_data_loader)
 
     def prediction(self):
-        '''
+        """
         This function is for predicting the rank 1 and rank 5 accuracy
-        '''
+        """
 
-        self.logger.info("Building model ...")
-        self.build_model()
+        # Build the model - Not required through
+        # self.logger.info("Building model ...")
+        # self.build_model()
 
         # Load model from checkpoint
         self.load_checkpoint(test=True)

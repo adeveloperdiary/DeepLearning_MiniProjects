@@ -5,7 +5,7 @@ from apex import amp
 from common.tf.utils.init_executor import *
 import numpy as np
 import tensorflow as tf
-from common.tf.callbacks.CustomCheckpoint import *
+from common.tf.callbacks.checkpoint import *
 from datetime import datetime
 
 """
@@ -16,8 +16,7 @@ from datetime import datetime
     complex functionality.
         
     There are many aspects which are covered in the Executor and its parent class BaseExecutor, such as:
-        1.  Data Augmentation is outside of this class and can be defined in a 
-            semi declarative way using albumentations library inside the transformation.py class.
+        1.  Data Augmentation is outside of this class transformation.py class.
         2.  Automatic Loading and Saving models from and to checkpoint. 
         3.  Integration with Tensor Board. The Tensor Board data is being written after a checkpoint save.
             This is to make sure that upon restarting the training, the plots are properly drawn.
@@ -27,9 +26,7 @@ from datetime import datetime
         4.  Logging has been enabled in both console and external file. The external file name can be configured 
             using the configuration.
         5.  Multi-GPU Training has been enabled using torch.nn.DataParallel() functionality. 
-        6.  Mixed Precision has been enabled using Nvidia's apex library as the PyTorch 1.6 is not released yet.
-            None:   At this moment both Multi-GPU and Mixed Precision can not be using together. This will be fixed 
-                    once PyTorch 1.6 has been released.
+        6.  Mixed Precision has been enabled using tf.keras.mixed_precision.experimental.set_policy() function.
 """
 
 
@@ -119,7 +116,7 @@ class BaseExecutor(InitExecutor):
         # Return the values
         return correct_rank1 / total, correct_rank5 / total
 
-    def create_checkpoint_folder(self):
+    def define_checkpoint_folder(self):
         """
             This function is for creating an empty checkpoint folder. The folder does not get created until
             there is a checkpoint to save.
@@ -195,9 +192,13 @@ class BaseExecutor(InitExecutor):
         """
         if self.MULTI_GPU:
             # Verify if there are more then 1 GPU
-            if torch.cuda.device_count() > 1:
-                self.logger.info(f"\tUsing {int(torch.cuda.device_count())} GPUs for training ...")
-                pass
+            no_gpu = len(tf.config.experimental.list_physical_devices('GPU'))
+            print("Num GPUs Available: ", no_gpu)
+            if no_gpu > 1:
+                tf.debugging.set_log_device_placement(True)
+                self.multi_gpu_strategy = tf.distribute.MirroredStrategy()
+                return True
+        return False
 
     def enable_precision_mode(self):
         """
@@ -239,3 +240,11 @@ class BaseExecutor(InitExecutor):
 
         history = self.model.fit(self.train_data_loader, validation_data=self.val_data_loader, callbacks=[self.checkpoint, tensorboard_callback],
                                  **fit_params)
+
+    def call_build_model(self):
+        self.logger.info("Building model ...")
+        if self.MULTI_GPU and self.enable_multi_gpu_training():
+            with self.multi_gpu_strategy.scope():
+                self.build_model()
+        else:
+            self.build_model()

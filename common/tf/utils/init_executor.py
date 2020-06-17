@@ -27,6 +27,7 @@ class InitExecutor(object):
         self.train_loss = None
         self.val_loss = None
         self.learning_rate_cache = None
+        self.multi_gpu_strategy = None
 
         self.CHECKPOINT_PATH = None
         self.CHECKPOINT_INTERVAL = None
