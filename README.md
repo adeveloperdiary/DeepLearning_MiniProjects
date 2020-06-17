@@ -1,7 +1,7 @@
 # List of Deep Learning related mini projects
 
 ## Image Classification
-[[1] Implementation of AlexNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet)
+[[1] Implementation of AlexNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet) and [Tensorflow 2.0](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/AlexNet_TF2)
 
 [[2] Implementation of ZFNet using PyTorch ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/ZFNet)
 
