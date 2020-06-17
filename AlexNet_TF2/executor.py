@@ -51,7 +51,8 @@ class Executor(BaseExecutor):
         """
 
         # Build the model
-        self.call_build_model()
+        self.logger.info("Building model ...")
+        self.call_build_model(model_fn=self.build_model)
 
         # Define the checkpoint folder if needed
         self.define_checkpoint_folder()

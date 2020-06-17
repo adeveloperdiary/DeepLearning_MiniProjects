@@ -203,12 +203,6 @@ class BaseExecutor(InitExecutor):
     def enable_precision_mode(self):
         """
             This function is for using FP16 with Mixed Precision.
-            As of now PyTouch 1.6 is not stable which as enabled
-            Mixed Precision training without Nvidia library.
-            Hence using amp library, the downside is it cannot be used
-            with multiple GPU just yet.
-
-            https://nvidia.github.io/apex/amp.html
         """
         if self.FP16_MIXED:
             policy = tf.keras.mixed_precision.experimental.Policy('mixed_float16')
@@ -241,10 +235,12 @@ class BaseExecutor(InitExecutor):
         history = self.model.fit(self.train_data_loader, validation_data=self.val_data_loader, callbacks=[self.checkpoint, tensorboard_callback],
                                  **fit_params)
 
-    def call_build_model(self):
-        self.logger.info("Building model ...")
+    def call_build_model(self, model_fn):
+        """
+            This function is for wrapping the model in multi_gpu_strategy.
+        """
         if self.MULTI_GPU and self.enable_multi_gpu_training():
             with self.multi_gpu_strategy.scope():
-                self.build_model()
+                model_fn()
         else:
-            self.build_model()
+            model_fn()
