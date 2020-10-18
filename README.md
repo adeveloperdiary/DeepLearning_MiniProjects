@@ -18,3 +18,6 @@
 [[1] Sentiment Analysis using RNN ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/Sentiment_Analysis_using_RNN )
 
 [[2] Generate python source using RNN ](https://github.com/adeveloperdiary/DeepLearning_MiniProjects/tree/master/Char_Sequence_with_RNN)
+
+## Note
+- The common folder has all the generic class and methods, used accross multiple implementations.
