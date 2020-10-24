@@ -223,7 +223,6 @@ def train(train_iterator, valid_iterator, source, target, epochs=10):
         pbar.set_postfix(
             epoch=f" {epoch}, train loss= {round(sum(training_loss) / len(training_loss), 4)}, val loss= {round(sum(validation_loss) / len(validation_loss), 4)}",
             refresh=False)
-
         pbar.close()
 
     return model
