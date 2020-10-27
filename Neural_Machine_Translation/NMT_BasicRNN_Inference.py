@@ -11,7 +11,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def get_test_datasets():
-
     # Download the language files
     spacy_de = spacy.load('de')
     spacy_en = spacy.load('en')
@@ -150,14 +149,14 @@ def predict(id, model, source_vocab, target_vocab, test_data):
     src_indexes = [source_vocab.stoi[token] for token in tokens]
     src_tensor = torch.LongTensor(src_indexes).unsqueeze(1).to(device)
 
-    # Take the integer value of <sos> from the target vocabulary.
-    trg_index = [target_vocab.stoi['<sos>']]
-    next_token = torch.LongTensor(trg_index).to(device)
-
     model.eval()
 
     # Run the forward pass of the encoder
     hidden, cell = model.encoder(src_tensor)
+
+    # Take the integer value of <sos> from the target vocabulary.
+    trg_index = [target_vocab.stoi['<sos>']]
+    next_token = torch.LongTensor(trg_index).to(device)
 
     outputs = []
     with torch.no_grad():
@@ -180,7 +179,7 @@ def predict(id, model, source_vocab, target_vocab, test_data):
 
 
 if __name__ == '__main__':
-    checkpoint_file = 'nmt-model-lstm-20.pth'
+    checkpoint_file = '../Seq2Seq/nmt-model-lstm-15.pth'
     model, source_vocab, target_vocab, test_data = load_models_and_test_data(checkpoint_file)
-    predict(14, model, source_vocab, target_vocab, test_data)
-    predict(20, model, source_vocab, target_vocab, test_data)
+    predict(1, model, source_vocab, target_vocab, test_data)
+    predict(2, model, source_vocab, target_vocab, test_data)
