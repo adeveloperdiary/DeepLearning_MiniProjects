@@ -6,6 +6,8 @@ import spacy
 import numpy as np
 import random
 from termcolor import colored
+from torchtext.data.metrics import bleu_score
+from Neural_Machine_Translation.NMT_BasicRNN_train import EncoderDecoder, Encoder, OneStepDecoder, Decoder
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -30,85 +32,6 @@ def get_test_datasets():
     _, _, test_data = Multi30k.splits(exts=('.de', '.en'), fields=(source, target))
 
     return test_data
-
-
-class Encoder(nn.Module):
-    def __init__(self, vocab_len, embedding_dim, hidden_dim, n_layers, dropout_prob):
-        super().__init__()
-
-        self.embedding = nn.Embedding(vocab_len, embedding_dim)
-        self.rnn = nn.LSTM(embedding_dim, hidden_dim, n_layers, dropout=dropout_prob)
-
-        self.dropout = nn.Dropout(dropout_prob)
-
-    def forward(self, input_batch):
-        embed = self.dropout(self.embedding(input_batch))
-        outputs, (hidden, cell) = self.rnn(embed)
-
-        return hidden, cell
-
-
-class OneStepDecoder(nn.Module):
-    def __init__(self, input_output_dim, embedding_dim, hidden_dim, n_layers, dropout_prob):
-        super().__init__()
-        # self.input_output_dim will be used later
-        self.input_output_dim = input_output_dim
-
-        self.embedding = nn.Embedding(input_output_dim, embedding_dim)
-        self.rnn = nn.LSTM(embedding_dim, hidden_dim, n_layers, dropout=dropout_prob)
-        self.fc = nn.Linear(hidden_dim, input_output_dim)
-        self.dropout = nn.Dropout(dropout_prob)
-
-    def forward(self, target_token, hidden, cell):
-        target_token = target_token.unsqueeze(0)
-        embedding_layer = self.dropout(self.embedding(target_token))
-        output, (hidden, cell) = self.rnn(embedding_layer, (hidden, cell))
-
-        linear = self.fc(output.squeeze(0))
-
-        return linear, hidden, cell
-
-
-class Decoder(nn.Module):
-    def __init__(self, one_step_decoder, device):
-        super().__init__()
-        self.one_step_decoder = one_step_decoder
-        self.device = device
-
-    def forward(self, target, hidden, cell, teacher_forcing_ratio=0.5):
-        target_len, batch_size = target.shape[0], target.shape[1]
-        target_vocab_size = self.one_step_decoder.input_output_dim
-        # Store the predictions in an array for loss calculations
-        predictions = torch.zeros(target_len, batch_size, target_vocab_size).to(self.device)
-        # Take the very first word token, which will be sos
-        input = target[0, :]
-
-        # Loop through all the time steps
-        for t in range(1, target_len):
-            predict, hidden, cell = self.one_step_decoder(input, hidden, cell)
-
-            predictions[t] = predict
-            input = predict.argmax(1)
-
-            # Teacher forcing
-            do_teacher_forcing = random.random() < teacher_forcing_ratio
-            input = target[t] if do_teacher_forcing else input
-
-        return predictions
-
-
-class EncoderDecoder(nn.Module):
-    def __init__(self, encoder, decoder):
-        super().__init__()
-
-        self.encoder = encoder
-        self.decoder = decoder
-
-    def forward(self, source, target, teacher_forcing_ratio=0.5):
-        hidden, cell = self.encoder(source)
-        outputs = self.decoder(target, hidden, cell, teacher_forcing_ratio)
-
-        return outputs
 
 
 def create_model_for_inference(source_vocab, target_vocab):
@@ -140,7 +63,7 @@ def load_models_and_test_data(file_name):
     return model, source_vocab, target_vocab, test_data
 
 
-def predict(id, model, source_vocab, target_vocab, test_data):
+def predict(id, model, source_vocab, target_vocab, test_data, debug=False):
     src = vars(test_data.examples[id])['src']
     trg = vars(test_data.examples[id])['trg']
 
@@ -159,6 +82,8 @@ def predict(id, model, source_vocab, target_vocab, test_data):
     next_token = torch.LongTensor(trg_index).to(device)
 
     outputs = []
+    trg_indexes = []
+
     with torch.no_grad():
         # Use the hidden and cell vector of the Encoder and in loop
         # run the forward pass of the OneStepDecoder until some specified
@@ -168,18 +93,42 @@ def predict(id, model, source_vocab, target_vocab, test_data):
 
             # Take the most probable word
             next_token = output.argmax(1)
+
+            trg_indexes.append(next_token.item())
+
             predicted = target_vocab.itos[output.argmax(1).item()]
             if predicted == '<eos>':
                 break
             else:
                 outputs.append(predicted)
+    if debug:
+        print(colored(f'Ground Truth    = {" ".join(trg)}', 'green'))
+        print(colored(f'Predicted Label = {" ".join(outputs)}', 'red'))
 
-    print(colored(f'Ground Truth    = {" ".join(trg)}', 'green'))
-    print(colored(f'Predicted Label = {" ".join(outputs)}', 'red'))
+    predicted_words = [target_vocab.itos[i] for i in trg_indexes]
+
+    return predicted_words
+
+
+def cal_bleu_score(dataset, model, source_vocab, target_vocab):
+    targets = []
+    predictions = []
+
+    for i in range(len(dataset)):
+        target = vars(test_data.examples[i])['trg']
+        predicted_words = predict(i, model, source_vocab, target_vocab, dataset)
+        predictions.append(predicted_words[1:-1])
+        targets.append([target])
+
+    print(f'BLEU Score: {round(bleu_score(predictions, targets) * 100, 2)}')
 
 
 if __name__ == '__main__':
-    checkpoint_file = '../Seq2Seq/nmt-model-lstm-15.pth'
+    checkpoint_file = 'nmt-model-lstm-25.pth'
     model, source_vocab, target_vocab, test_data = load_models_and_test_data(checkpoint_file)
-    predict(1, model, source_vocab, target_vocab, test_data)
-    predict(2, model, source_vocab, target_vocab, test_data)
+    predict(1, model, source_vocab, target_vocab, test_data, debug=True)
+    predict(2, model, source_vocab, target_vocab, test_data, debug=True)
+    predict(14, model, source_vocab, target_vocab, test_data, debug=True)
+    predict(20, model, source_vocab, target_vocab, test_data, debug=True)
+
+    cal_bleu_score(test_data, model, source_vocab, target_vocab)

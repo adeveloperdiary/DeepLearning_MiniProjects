@@ -294,13 +294,14 @@ def train(train_iterator, valid_iterator, source, target, epochs=10):
     return model
 
 
-train_iterator, valid_iterator, test_iterator, source, target = get_datasets(batch_size=256)
-model = train(train_iterator, valid_iterator, source, target, epochs=5)
+if __name__ == '__main__':
+    train_iterator, valid_iterator, test_iterator, source, target = get_datasets(batch_size=256)
+    model = train(train_iterator, valid_iterator, source, target, epochs=25)
 
-checkpoint = {
-    'model_state_dict': model.state_dict(),
-    'source': source.vocab,
-    'target': target.vocab
-}
+    checkpoint = {
+        'model_state_dict': model.state_dict(),
+        'source': source.vocab,
+        'target': target.vocab
+    }
 
-torch.save(checkpoint, 'nmt-model-gru-attention-five.pth')
+    torch.save(checkpoint, 'nmt-model-gru-attention-25.pth')
